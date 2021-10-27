@@ -1,0 +1,135 @@
+* {
+	color: #fff;
+	outline: none;
+}
+
+body {
+	overflow: hidden;
+	font-family: 'Roboto', sans-serif;
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#container {
+	padding: 10px;
+	text-shadow: 2px 2px 5px #424242;
+  	position: absolute;
+  	color: rgb(241, 235, 235);
+  	top: 47%;
+  	left: 50%;
+	width: 1100px;
+	height: 630px;
+  	transform: translate(-50%,-50%);
+  	font-size: 45px;
+	text-align: center;
+	background-color: rgba(50, 50, 50, 0.75);
+	border-radius: 25px;
+}
+
+.content {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.craftinggrid {
+	margin: 2vh;
+	transform: translateY(-30%);
+	display: flex;
+	flex-wrap: wrap;
+	width: 380px;
+	height: 250px;
+}
+
+.inventory {
+	margin: 2vh;
+	font-size: 28px;
+}
+
+#inventory {
+	text-align: left;
+	width: 100%;
+}
+
+#inventory td {
+	padding: 5px;
+}
+
+#inventory td:hover {
+	background-color: black;
+}
+
+.inventory-container {
+	background-color: rgba(50, 50, 50, 0.8);
+	width: 300px;
+	height: 420px;
+}
+
+.result {
+	margin: 2vh;
+	font-size: 28px;
+	transform: translateY(-22%);
+}
+
+.result-container {
+	background-color: rgba(50, 50, 50, 0.8);
+	width: 110px;
+	height: 110px;
+}
+
+.field {
+	display: flex;
+	justify-content: space-between;
+	margin: 5px;
+	width: 110px;
+	height: 110px;
+	background-color: rgba(50, 50, 50, 0.8);
+	border: 1px solid rgba(50, 50, 50, 0.8);
+}
+
+.field:hover {
+		border: 1px solid white;
+}
+
+.button {
+	width: 100px;
+	margin: 8vh;
+	color: black;
+	border-radius: 50px;
+	height: 35px;
+	border: 1px solid white;
+	cursor: pointer;
+	position: relative;
+	bottom: 21%;
+	transform: translateY(-200%);
+}
+
+.buttons {
+	height: 50px;
+}
+
+.bar {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transform: translateY(-120%);
+}
+
+.bar-background {
+	background-color: black;
+	border-radius: 50px;
+	width: 750px;
+	height: 10px;
+}
+
+.bar-fill{
+	background-color: white;
+	border-radius: 50px;
+	width: 0%;
+	height: 10px;
+}

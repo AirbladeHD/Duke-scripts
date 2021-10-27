@@ -1,0 +1,365 @@
+{"Trauben":150,"Medkits":94,"Grippepillen":20,"Reperaturkits":188,"Apfel":28,"Meth":17}
+
+[{"amount":10,"name":"Trauben"},{"amount":20,"name":"Apfel"}]
+
+_Pool = NativeUI.CreatePool()
+playerPed = PlayerPedId()
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(5)
+        if IsControlJustReleased(0, 289) then
+            openInventory()
+        end
+        _Pool:ProcessMenus()
+    end
+end)
+
+RegisterNetEvent('inv:RegisterItem')
+AddEventHandler('inv:RegisterItem', function(item)
+    TriggerServerEvent('inv:ChkItem', item)
+end)
+
+RegisterCommand('regitem', function(source, args, raw)
+    TriggerEvent('inv:RegisterItem', args[1])
+end)
+
+function ShowNotification(text)
+	SetNotificationTextEntry('STRING')
+    AddTextComponentString(text)
+	DrawNotification(false, true)
+end
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(20000)
+        local id = GetPlayerServerId(PlayerId())
+        TriggerServerEvent('inv:refresh_inventory', id)
+    end
+end)
+
+RegisterNetEvent('inv:additem_callback')
+AddEventHandler('inv:additem_callback', function(item, amount, msg)
+    local id = GetPlayerServerId(PlayerId())
+    if item == nil then
+        ShowNotification(msg)
+        TriggerServerEvent('inv:refresh_inventory', id)
+    else
+        ShowNotification(item.." ("..amount..") hinzugefügt")
+        TriggerServerEvent('inv:refresh_inventory', id)
+    end
+end)
+
+RegisterNetEvent('inv:removeitem_callback')
+AddEventHandler('inv:removeitem_callback', function(item, amount, msg)
+    local id = GetPlayerServerId(PlayerId())
+    if item == nil then
+        ShowNotification(msg)
+        TriggerServerEvent('inv:refresh_inventory', id)
+    else
+        ShowNotification(item.." ("..amount..") entfernt")
+        TriggerServerEvent('inv:refresh_inventory', id)
+    end
+end)
+
+RegisterCommand('refresh_inventory', function(source, args, raw)
+    local id = GetPlayerServerId(PlayerId())
+    TriggerServerEvent('inv:refresh_inventory', id)
+end)
+
+RegisterCommand('additem', function(source, args, raw)
+    local id = GetPlayerServerId(PlayerId())
+    if args[2] == nil then
+        ShowNotification("Du musst eine Menge angeben")
+    elseif tonumber(args[2]) < 0 then
+        ShowNotification("Die Menge muss größer als 0 sein")
+    else
+        TriggerServerEvent('inv:additem', args[1], id, args[2])
+    end
+end)
+
+RegisterCommand('rmvitem', function(source, args, raw)
+    local id = GetPlayerServerId(PlayerId())
+    if args[2] == nil then
+        ShowNotification("Du musst eine Menge angeben")
+    elseif tonumber(args[2]) < 0 then
+        ShowNotification("Die Menge muss größer als 0 sein")
+    else
+        TriggerServerEvent('inv:removeitem', args[1], id, args[2])
+    end
+end)
+
+function openInventory()
+    local player = PlayerId()
+    local playerPed = PlayerPedId()
+    local id = GetPlayerServerId(player)
+    menu = NativeUI.CreateMenu('Inventar', 'Item auswählen:')
+    _Pool:Add(menu)
+    _Pool:MouseControlsEnabled (false)
+    _Pool:MouseEdgeEnabled (false)
+    _Pool:ControlDisablingEnabled(false)
+    local inventory = GetConvar("inventory"..GetPlayerName(player), "Abrufen des Inventars fehlgeschlagen")
+    if inventory == "{}" then
+        local item = NativeUI.CreateItem('Leer', 'Du hast nichts in deinem Inventar')
+        menu:AddItem(item)
+    else
+        local items = json.decode(inventory)
+        if items.Trauben ~= nil or items.trauben ~= nil then
+            local item = NativeUI.CreateItem('Trauben ('..items.Trauben..")", "Trauben zum weiterverarbeiten")
+            menu:AddItem(item)
+        end
+        if items.Apfel ~= nil or items.apfel ~= nil then
+            local item = NativeUI.CreateItem('Äpfel ('..items.Apfel..")", "Äpfel zum weiterverarbeiten")
+            menu:AddItem(item)
+        end
+        if items.Grippepillen ~= nil or items.grippepillen ~= nil then
+            local item = NativeUI.CreateItem('Grippepillen ('..items.Grippepillen..")", "Erkältungsmittel zur Weiterverarbeitung zu Meth")
+            menu:AddItem(item)
+        end
+        if items.Meth ~= nil or items.meth ~= nil then
+            local item = NativeUI.CreateItem('Meth ('..items.Meth..")", "Droge zum verkaufen oder veredeln")
+            menu:AddItem(item)
+        end
+        if items.Medkits ~= nil or items.medkits ~= nil then
+            local item = NativeUI.CreateItem('Medkits ('..items.Medkits..")", "Ein Erste Hilfe Set, um dich zu heilen")
+            menu:AddItem(item)
+            item.Activated = function(sender, index)
+                RequestAnimDict("amb@world_human_stand_fishing@idle_a")
+                if GetVehiclePedIsIn(playerPed, false) ~= 0 then 
+                    return
+                end
+                local playerPed = PlayerPedId()
+                local id = GetPlayerServerId(PlayerId())
+                local health = GetPedMaxHealth(playerPed)
+                local coords = GetEntityCoords(playerPed)
+                local rotation = GetEntityRotation(playerPed)
+                local networkScene = NetworkCreateSynchronisedScene(GetEntityCoords(playerPed), GetEntityRotation(playerPed), 2, false, true, 1.0, 10000, 1.8)
+                menu:Visible(false)
+                NetworkAddPedToSynchronisedScene(playerPed, networkScene, "amb@world_human_stand_fishing@idle_a", "idle_b", 1.8, 1.9, 8000, 1, 1.5, 0)
+                NetworkStartSynchronisedScene(networkScene)
+                TriggerServerEvent('inv:removeitem', "Medkits", id, 1)
+                Citizen.CreateThread(function()
+                    Citizen.Wait(1000)
+                    TriggerServerEvent('inv:refresh_inventory', id)
+                    Citizen.Wait(7000)
+                    SetEntityHealth(playerPed, health)
+                    NetworkStopSynchronisedScene(networkScene)
+                    ShowNotification("Du wurdest geheilt")
+                end)
+            end
+        end
+        if items.Reperaturkits ~= nil or items.reperaturkits ~= nil then
+            local item = NativeUI.CreateItem('Reperaturkits ('..items.Reperaturkits..")", "Ein Werkzeugkasten, um Fahrzeuge zu reparieren")
+            menu:AddItem(item)
+            item.Activated = function(sender, index)
+                local playerPed = PlayerPedId()
+                local speed = GetEntityVelocity(playerPed)
+                local vehicle = GetVehiclePedIsIn(playerPed)
+                RequestAnimDict("mini@repair")
+                if vehicle == 0 then
+                    menu:Visible(false)
+                    ShowNotification("Du bist in keinem Fahrzeug")
+                else
+                    if speed.x ~= 0 and speed.y ~= 0 and speed.z ~= 0 then
+                        menu:Visible(false)
+                        ShowNotification("Du musst anhalten bevor du reparieren kannst")
+                        return
+                    end
+                    local id = GetPlayerServerId(PlayerId())
+                    local networkScene = NetworkCreateSynchronisedScene(GetEntityCoords(playerPed), GetEntityRotation(playerPed), 2, false, false, 1.0, 4000, 0.8)
+                    local vehicle = GetVehiclePedIsIn(playerPed, false)
+                    menu:Visible(false)
+                    Citizen.CreateThread(function()
+                        TaskLeaveVehicle(playerPed, vehicle, 0)
+                        Citizen.Wait(1000)
+                        NetworkAddPedToSynchronisedScene(playerPed, networkScene, "mini@repair", "fixing_a_player", 1.0, 1.9, 8000, 1, 1.5, 0)
+                        NetworkStartSynchronisedScene(networkScene)
+                    end)
+                    TriggerServerEvent('inv:removeitem', "Reperaturkits", id, 1)
+                    Citizen.CreateThread(function()
+                        Citizen.Wait(1000)
+                        TriggerServerEvent('inv:refresh_inventory', id)
+                        Citizen.Wait(9000)
+                        SetVehicleFixed(vehicle)
+                        SetVehicleDirtLevel(vehicle, 0)
+                        NetworkStopSynchronisedScene(networkScene)
+                        ShowNotification("Fahrzeug repariert")
+                    end)
+                end
+            end
+        end
+    end
+    menu:Visible(true)
+end
+
+
+
+'RequestAnimDict("amb@world_human_stand_fishing@idle_a")
+    if GetVehiclePedIsIn(playerPed, false) ~= 0 then 
+        return
+    end
+    local playerPed = PlayerPedId()
+    local id = GetPlayerServerId(PlayerId())
+    local health = GetPedMaxHealth(playerPed)
+    local coords = GetEntityCoords(playerPed)
+    local rotation = GetEntityRotation(playerPed)
+    local networkScene = NetworkCreateSynchronisedScene(GetEntityCoords(playerPed), GetEntityRotation(playerPed), 2, false, true, 1.0, 10000, 1.8)
+    menu:Visible(false)
+    NetworkAddPedToSynchronisedScene(playerPed, networkScene, "amb@world_human_stand_fishing@idle_a", "idle_b", 1.8, 1.9, 8000, 1, 1.5, 0)
+    NetworkStartSynchronisedScene(networkScene)
+    TriggerServerEvent("inv:removeItem", "Medkits", id, 1)
+    Citizen.CreateThread(function()
+        Citizen.Wait(1000)
+        TriggerServerEvent("inv:refresh_inventory", id)
+        Citizen.Wait(7000)
+        SetEntityHealth(playerPed, health)
+        NetworkStopSynchronisedScene(networkScene)
+        ShowNotification("Du wurdest geheilt")
+    end)'
+
+
+
+SERVER
+
+
+
+
+RegisterServerEvent('inv:refresh_inventory')
+AddEventHandler('inv:refresh_inventory', function(player)
+    local identifier = GetPlayerIdentifier(player, 0)
+    MySQL.Async.fetchAll('SELECT inventory, username FROM users WHERE license = @license', { 
+        ['@license'] = identifier },
+    function(result)
+        local inventory = result[1].inventory
+        local user = result[1].username
+        SetConvarReplicated("inventory"..user, inventory)
+    end)
+end)
+
+RegisterServerEvent('inv:additem')
+AddEventHandler('inv:additem', function(item, user, amount)
+    MySQL.Async.fetchAll('SELECT name FROM items WHERE name = @item', {
+        ['@item'] = item
+    },
+    function(result)
+        local license = GetPlayerIdentifier(user, 0)
+        if result[1] == nil then
+            local msg = "Dieses Item existiert nicht!"
+            TriggerClientEvent('inv:additem_callback', user, nil, amount, msg)
+        else
+            MySQL.Async.fetchAll('SELECT inventory FROM users WHERE license = @license', { 
+                ['@license'] = license },
+            function(result)
+                local inventory = json.decode(result[1].inventory)
+                if inventory[item] == nil then
+                    inventory[item] = math.ceil(tonumber(amount))
+                    MySQL.Async.execute('UPDATE users SET inventory = @inventory WHERE license = @license', {
+                        ['@inventory'] = json.encode(inventory),
+                        ['@license'] = license,
+                        },
+                    function(affectedRows)
+                        local msg = nil
+                        TriggerClientEvent('inv:additem_callback', user, item, amount, msg)
+                    end)
+                else
+                    local old_amount = inventory[item]
+                    local new_amount = old_amount + amount
+                    inventory[item] = math.ceil(new_amount)
+                    MySQL.Async.execute('UPDATE users SET inventory = @inventory WHERE license = @license', {
+                        ['@inventory'] = json.encode(inventory),
+                        ['@license'] = license,
+                        },
+                    function(affectedRows)
+                        local msg = nil
+                        TriggerClientEvent('inv:additem_callback', user, item, amount, msg)
+                    end)
+                end
+            end)
+        end
+    end)
+end)
+
+RegisterServerEvent('inv:removeitem')
+AddEventHandler('inv:removeitem', function(item, user, amount)
+    MySQL.Async.fetchAll('SELECT name FROM items WHERE name = @item', {
+        ['@item'] = item
+    },
+    function(result)
+        local license = GetPlayerIdentifier(user, 0)
+        if result[1] == nil then
+            local msg = "Dieses Item existiert nicht!"
+            TriggerClientEvent('inv:removeitem_callback', user, nil, amount, msg)
+        else
+            MySQL.Async.fetchAll('SELECT inventory FROM users WHERE license = @license', { 
+                ['@license'] = license },
+            function(result)
+                local inventory = json.decode(result[1].inventory)
+                local old_amount = inventory[item]
+                local new_amount = old_amount - amount
+                if inventory[item] == nil then
+                    local msg = "Du hast nichts von diesem Item!"
+                    TriggerClientEvent('inv:removeitem_callback', user, nil, amount, msg)
+                elseif new_amount == 0 then
+                    inventory[item] = nil
+                    MySQL.Async.execute('UPDATE users SET inventory = @inventory WHERE license = @license', {
+                        ['@inventory'] = json.encode(inventory),
+                        ['@license'] = license,
+                        },
+                    function(affectedRows)
+                        local msg = nil
+                        TriggerClientEvent('inv:removeitem_callback', user, item, amount, msg)
+                    end)
+                else
+                    inventory[item] = math.ceil(new_amount)
+                    MySQL.Async.execute('UPDATE users SET inventory = @inventory WHERE license = @license', {
+                        ['@inventory'] = json.encode(inventory),
+                        ['@license'] = license,
+                        },
+                    function(affectedRows)
+                        local msg = nil
+                        TriggerClientEvent('inv:removeitem_callback', user, item, amount, msg)
+                    end)
+                end
+            end)
+        end
+    end)
+end)
+
+RegisterServerEvent('inv:ChkItem', function(item)
+    MySQL.Async.fetchAll('SELECT name FROM items WHERE name = @item', {
+        ['@item'] = item
+    },
+    function(result)
+        if #result == 0 then
+            MySQL.Async.execute('INSERT INTO items (name) VALUES (@item)',
+                { ['item'] = item},
+            function(affectedRows)
+                print(affectedRows)
+            end)
+        end
+    end)
+end)
+
+local function OnPlayerConnecting(name, setKickReason, deferrals)
+    local player = source
+    local name = GetPlayerName(player)
+    local identifier = GetPlayerIdentifier(player, 0)
+    MySQL.Async.fetchAll('SELECT inventory, username FROM users WHERE license = @license', { 
+        ['@license'] = identifier },
+    function(result)
+        local inventory = result[1].inventory
+        local user = result[1].username
+        if name ~= user then
+            MySQL.Async.execute('UPDATE users SET username = @username WHERE license = @license', {
+                ['@license'] = identifier,
+                ['@username'] = name },
+            function(affectedRows)
+                print("Namen aktualisiert")
+                user = name
+            end)
+        end
+        SetConvarReplicated("inventory"..user, inventory)
+    end)
+end
+
+AddEventHandler("playerConnecting", OnPlayerConnecting)

@@ -1,0 +1,28 @@
+if result[1] == nil then
+            local msg = "Dieses Item existiert nicht!"
+            TriggerClientEvent('shop:additem_callback', user, nil, amount, msg)
+        else
+            MySQL.Async.fetchAll('SELECT inventory FROM users WHERE license = @license', { 
+                ['@license'] = license },
+                function(result)
+                local inventory = json.decode(result[1].inventory)
+                local old_amount = inventory[item]
+                local new_amount = old_amount + amount
+                inventory[item] = math.ceil(new_amount)
+                MySQL.Async.execute('UPDATE users SET inventory = @inventory WHERE license = @license', {
+                    ['@inventory'] = json.encode(inventory),
+                    ['@license'] = license,
+                    },
+                    function(affectedRows)
+                    local msg = nil
+                    TriggerClientEvent('shop:additem_callback', user, result[1].name, amount, msg)
+                end)
+            end)
+        end
+
+    local id = GetPlayerServerId(PlayerId())
+    if msg == nil then
+        ShowNotification(msg)
+    else
+        ShowNotification(item.."("..amount..") erfolgreich hinzugefügt")
+    end

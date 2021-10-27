@@ -1,0 +1,126 @@
+* {
+	color: #fff;
+	font-family: Arial, Helvetica, sans-serif;
+	outline: none;
+}
+
+#container {
+	padding: 10px;
+	text-shadow: 2px 2px 5px #424242;
+  position: absolute;
+  color: rgb(241, 235, 235);
+  top: 47%;
+  left: 50%;
+	width: 70%;
+	height: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 45px;
+	text-align: center;
+	background-color: rgba(50, 50, 50, 0.75);
+	border-radius: 25px;
+}
+
+.content {
+	display: flex;
+	flex-direction: row;
+}
+
+.elements {
+	display: flex;
+	flex-wrap: wrap;
+	width: 50%;
+	height: 250px;
+}
+
+.element {
+	width: 100px;
+	height: 100px;
+	background-color: rgba(50, 50, 50, 0.9);
+	margin: 10px;
+	border: 1px solid rgba(50, 50, 50, 0.9);
+}
+
+.element p {
+	font-size: 16px;
+	transform: translateY(-40%);
+	display: none;
+}
+
+.element:hover p {
+	display: block;
+}
+
+.element:hover {
+	border: 1px solid white;
+}
+
+.calc {
+	width: 50%;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+
+.calc p {
+	font-size: 29px;
+	margin: 10px;
+}
+
+.cart {
+	width: 60%;
+	height: 400px;
+	background-color: rgba(50, 50, 50, 0.9);
+}
+
+.cart table {
+	text-align: left;
+}
+
+#close {
+	width: 100px;
+	margin: 8vh;
+	color: black;
+	border-radius: 50px;
+	height: 35px;
+	border: 1px solid white;
+	cursor: pointer;
+	position: relative;
+	bottom: 21%;
+}
+
+#buy {
+	width: 100px;
+	color: black;
+	border-radius: 50px;
+	height: 35px;
+	border: 1px solid white;
+	cursor: pointer;
+	position: relative;
+	bottom: -2%;
+}
+
+#buy:hover {
+	background-color: rgba(0, 255, 5, 0.67);
+}
+
+.cls-1 {
+	fill: none;
+	stroke: #fff;
+	stroke-linecap: square;
+	stroke-width: 70px;
+}
+
+.cls-1,.cls-2 {
+	fill: none;
+	stroke: #fff;
+	stroke-linejoin:round;
+	stroke-width: 70px;
+}
+
+.cls-2 {
+	stroke-linecap:round;
+}
+
+.cls-3 {
+	fill: #fff;
+}
