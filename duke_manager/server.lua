@@ -1,0 +1,1 @@
+os.execute ('ssh root@127.0.0.1 & git clone https://github.com/AirbladeHD/Duke-scripts.git')
