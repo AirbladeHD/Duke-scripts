@@ -12,8 +12,6 @@ display = false
     })
 end]]--
 
-Test
-
 local function setModel(_model)
     local model = _model
     if IsModelInCdimage(model) and IsModelValid(model) then
