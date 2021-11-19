@@ -1,28 +1,82 @@
+RegisterServerEvent('register')
+AddEventHandler('register', function()
+    for _, playerId in ipairs(GetPlayers()) do
+        local name = GetPlayerName(playerId)
+        local license = GetPlayerIdentifier(playerId, 0)
+        MySQL.Async.fetchAll('SELECT * FROM users WHERE license = @license', { 
+            ['@license'] = license },
+        function(result)
+            local users = json.encode(result)
+            if not next(result) then
+                MySQL.Async.execute('INSERT INTO users (username, license) VALUES (@username, @license)', {
+                    ['@username'] = name,
+                    ['@license'] = license,
+                },
+                function(affectedRows)
+                   print(affectedRows.." Zeile eingefügt. "..name.." registriert.")
+                end)
+            end
+        end)
+    end
+end)
+
 local function OnPlayerConnecting(name, setKickReason, deferrals)
     local player = source
     local name = GetPlayerName(player)
     local identifier = GetPlayerIdentifier(player, 0)
-    MySQL.Async.fetchAll('SELECT entry, coords, style FROM users WHERE license = @license', { 
+    MySQL.Async.fetchAll('SELECT * FROM users WHERE license = @license', { 
         ['@license'] = identifier },
     function(result)
-        local entry = result[1].entry
-        local coords =  result[1].coords
-        local style =  result[1].style
-        if entry == false then
-            SetConvarReplicated("entry"..name, "0")
-            --TriggerClientEvent('identity:spawn', NetworkGetNetworkIdFromEntity(name), "Test")
+        local users = json.encode(result)
+        if not next(result) then
+            MySQL.Async.execute('INSERT INTO users (username, license) VALUES (@username, @license)', {
+                ['@username'] = name,
+                ['@license'] = identifier,
+            },
+            function(affectedRows)
+               print(affectedRows.." Zeile eingefügt. "..name.." registriert.")
+                MySQL.Async.fetchAll('SELECT entry, coords, style FROM users WHERE license = @license', { 
+                    ['@license'] = identifier },
+                function(result)
+                    local entry = result[1].entry
+                    local coords =  result[1].coords
+                    local style =  result[1].style
+                    if entry == false then
+                        SetConvarReplicated("entry"..name, "0")
+                    else
+                        SetConvarReplicated("entry"..name, "1")
+                        SetConvarReplicated("coords"..name, coords)
+                    end
+                    if style == false then
+                        SetConvarReplicated("style"..name, "0")
+                    else
+                        SetConvarReplicated("style"..name, style)
+                    end
+                end)
+                print("Nutzerdaten erfasst")
+            end)
         else
-            SetConvarReplicated("entry"..name, "1")
-            SetConvarReplicated("coords"..name, coords)
-            --TriggerClientEvent('identity:spawn', NetworkGetNetworkIdFromEntity(source), "Test")
-        end
-        if style == false then
-            SetConvarReplicated("style"..name, "0")
-        else
-            SetConvarReplicated("style"..name, style)
+            MySQL.Async.fetchAll('SELECT entry, coords, style FROM users WHERE license = @license', { 
+                ['@license'] = identifier },
+            function(result)
+                local entry = result[1].entry
+                local coords =  result[1].coords
+                local style =  result[1].style
+                if entry == false then
+                    SetConvarReplicated("entry"..name, "0")
+                else
+                    SetConvarReplicated("entry"..name, "1")
+                    SetConvarReplicated("coords"..name, coords)
+                end
+                if style == false then
+                    SetConvarReplicated("style"..name, "0")
+                else
+                    SetConvarReplicated("style"..name, style)
+                end
+            end)
+            print("Nutzerdaten erfasst")
         end
     end)
-    print("Nutzerdaten erfasst")
 end
 
 AddEventHandler("playerConnecting", OnPlayerConnecting)

@@ -1,25 +1,3 @@
-RegisterServerEvent('bank:register')
-AddEventHandler('bank:register', function()
-    for _, playerId in ipairs(GetPlayers()) do
-        local name = GetPlayerName(playerId)
-        local license = GetPlayerIdentifier(playerId, 0)
-        MySQL.Async.fetchAll('SELECT * FROM users WHERE license = @license', { 
-            ['@license'] = license },
-        function(result)
-            local users = json.encode(result)
-            if not next(result) then
-                MySQL.Async.execute('INSERT INTO users (username, license) VALUES (@username, @license)', {
-                    ['@username'] = name,
-                    ['@license'] = license,
-                },
-                function(affectedRows)
-                   print(affectedRows.." Zeile eingefügt. "..name.." registriert.")
-                end)
-            end
-        end)
-    end
-end)
-
 RegisterServerEvent('bank:deduct')
 AddEventHandler('bank:deduct', function(id, amount)
     local license = GetPlayerIdentifier(id, 0)
@@ -90,7 +68,7 @@ AddEventHandler('bank:pull_money', function()
     end
 end)
 
-local function OnPlayerConnecting(name, setKickReason, deferrals)
+--[[local function OnPlayerConnecting(name, setKickReason, deferrals)
     local player = source
     local identifier = GetPlayerIdentifier(player, 0)
     MySQL.Async.fetchAll('SELECT * FROM users WHERE license = @license', { 
@@ -136,4 +114,4 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
     end)
 end
 
-AddEventHandler("playerConnecting", OnPlayerConnecting)
+AddEventHandler("playerConnecting", OnPlayerConnecting)]]--
