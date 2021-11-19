@@ -1,4 +1,4 @@
-RegisterServerEvent('register')
+--[[RegisterServerEvent('register')
 AddEventHandler('register', function()
     for _, playerId in ipairs(GetPlayers()) do
         local name = GetPlayerName(playerId)
@@ -18,7 +18,7 @@ AddEventHandler('register', function()
             end
         end)
     end
-end)
+end)]]--
 
 local function OnPlayerConnecting(name, setKickReason, deferrals)
     local player = source
