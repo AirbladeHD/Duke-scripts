@@ -101,9 +101,13 @@ RegisterCommand('cam', function(source, args, raw)
     --SetPedEyeColor(playerPed, 6, 0, 1)
     --setModel("mp_m_freemode_01")
     --setModel("u_m_y_juggernaut_01")
-    local style = GetConvar("style"..GetPlayerName(PlayerId()), "Kein Style")
-    local style = json.decode(style)
-    print(style)
+    --local style = GetConvar("style"..GetPlayerName(PlayerId()), "Kein Style")
+    --local style = json.decode(style)
+    --print(style)
+    camSkin = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", 402.9295, -1003.847, -98.00027, 0.00, 0.00, 0.00, 15.0, true, 2)
+    PointCamAtEntity(camSkin, PlayerPedId(), 0.0, 0.6, 0.0, true)
+    SetCamActive(camSkin, true)
+    RenderScriptCams(true, false, 0, true, true)
 end)
 
 RegisterCommand('ped', function(source, args, raw)
@@ -147,8 +151,8 @@ end)
 
 function openEditor()
     editor = true
-    SetEntityCoords(PlayerPedId(), -1135.24, -2804.194, 27.70873, true, false, false, false)
-        setModel("mp_m_freemode_01")
+    --SetEntityCoords(PlayerPedId(), -1135.24, -2804.194, 27.70873, true, false, false, false)
+        --setModel("mp_m_freemode_01")
         Citizen.CreateThread(function()
             SetEntityVisible(playerPed, false)
             while control == false do
@@ -168,7 +172,7 @@ function openEditor()
                 Citizen.Wait(0)
             end
         end)
-    camSkin = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", -1135.5, -2797.0, 28.70876, 0.00, 0.00, 0.00, 15.0, true, 2)
+    camSkin = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", 402.9295, -1003.847, -98.00027, 0.00, 0.00, 0.00, 15.0, true, 2)
     PointCamAtEntity(camSkin, PlayerPedId(), 0.0, 0.6, 0.0, true)
     SetCamActive(camSkin, true)
     RenderScriptCams(true, false, 0, true, true)
@@ -350,7 +354,6 @@ function openEntry(bool)
         type = "ui",
         display = bool,
     })
-    print("NUI Nachricht gesendet")
 end
 
 RegisterCommand("editor", function()
