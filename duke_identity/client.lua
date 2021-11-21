@@ -12,6 +12,12 @@ display = false
     })
 end]]--
 
+function ShowNotification(text)
+	SetNotificationTextEntry('STRING')
+    AddTextComponentString(text)
+	DrawNotification(false, true)
+end
+
 local function setModel(_model)
     local model = _model
     if IsModelInCdimage(model) and IsModelValid(model) then
@@ -118,7 +124,9 @@ RegisterCommand('ped', function(source, args, raw)
     --SetPedComponentVariation(PlayerPedId(), 8, 1)
     --SetPedComponentVariation(PlayerPedId(), 9, 0)
     --SetPedComponentVariation(PlayerPedId(), 2, 2, 1)
-    print(GetPedTextureVariation(PlayerPedId(), 2))
+    --print(GetPedTextureVariation(PlayerPedId(), 2))
+    SetCamActive(camSkin, false)
+    StopRenderingScriptCamsUsingCatchUp(true)
 end)
 
 RegisterCommand('vanish', function(source, args, raw)
@@ -139,16 +147,51 @@ RegisterCommand('show', function()
 end)
 
 RegisterCommand('control', function(source, args, raw)
-    --local playerPed = PlayerPedId()
-    --SetEntityCoords(playerPed, -1140.822, -2806.093, 27.70873, true, false, false, true)
+    local playerPed = PlayerPedId()
+    SetEntityCoords(playerPed, -1140.822, -2806.093, 27.70873, true, false, false, true)
     --SetEntityRotation(playerPed, 0.009067512, 0.00114927, -96.40307)
-    --control = true
+    control = true
     SetEntityVisible(PlayerPedId(), true)
     SetEntityCompletelyDisableCollision(PlayerPedId(), true, false)
 end)
 
 RegisterNUICallback("exit", function(data)
     openEntry(false)
+end)
+
+RegisterNUICallback("no", function(data)
+    SetNuiFocus(false, false)
+    SendNUIMessage({
+        type = "confirm",
+        display = false,
+    })
+end)
+
+RegisterNUICallback("yes", function(data)
+    editor = false
+    SetNuiFocus(false, false)
+    SendNUIMessage({
+        type = "confirm",
+        display = false,
+    })
+    style = {
+        hair = currentHair,
+        face = currentFace,
+        hairColor = currentHairColor,
+        torso = currentTorso,
+        undershirt = currentUndershirt,
+        leg = currentLeg,
+        shoe = currentShoe,
+        arms = currentTorso2
+    }
+    TriggerServerEvent('identity:saveStyle', GetPlayerServerId(PlayerId()), style)
+    control = true
+    SetEntityCoords(PlayerPedId(), -1140.822, -2806.093, 27.70873, true, false, false, true)
+    SetEntityVisible(PlayerPedId(), true)
+    Citizen.Wait(1000)
+    menu:Visible(false)
+    SetCamActive(camSkin, false)
+    StopRenderingScriptCamsUsingCatchUp(true)
 end)
 
 function openEditor()
@@ -255,7 +298,7 @@ function openEditor()
     for i = 1, #undershirtList, 1 do
         SetPedPreloadPropData(PlayerPedId(), 8, undershirtList[i])
     end
-    local undershirt = NativeUI.CreateListItem("Unterhemd", undershirtList, 1)
+    local undershirt = NativeUI.CreateListItem("Shirt", undershirtList, 1)
     menu:AddItem(undershirt)
 
     local legNum = GetNumberOfPedDrawableVariations(PlayerPedId(), 4)
@@ -296,6 +339,13 @@ function openEditor()
     end
     local torso2 = NativeUI.CreateListItem("Arme", torso2List, 1)
     menu:AddItem(torso2)
+
+    local final = NativeUI.CreateItem('Speichern', 'Speichert deinen Charakter und setzt die Einreise fort.')
+    menu:AddItem(final)
+
+    final.Activated = function(sender, index)
+        finish()
+    end
 
     menu.OnListChange = function(sender, item, index)
         if item == face then
@@ -362,6 +412,37 @@ end
 RegisterCommand("editor", function()
     openEditor()
 end)
+
+function finish()
+    if currentTorso == 287 or currentUndershirt == 122 or currentLeg == 114 or currentLeg == 115 or currentShoe == 78 then
+        ShowNotification("Du darfst die Adminkleidung leider nicht benutzen")
+        return
+    end
+    SetNuiFocus(true, true)
+    SendNUIMessage({
+        type = "confirm",
+        display = true,
+    })
+    --[[style = {
+        hair = currentHair,
+        face = currentFace,
+        hairColor = currentHairColor,
+        torso = currentTorso,
+        undershirt = currentUndershirt,
+        leg = currentLeg,
+        shoe = currentShoe,
+        arms = currentTorso2
+    }
+    TriggerServerEvent('identity:saveStyle', GetPlayerServerId(PlayerId()), style)
+    editor = false
+    control = true
+    SetEntityCoords(PlayerPedId(), -1140.822, -2806.093, 27.70873, true, false, false, true)
+    SetEntityVisible(PlayerPedId(), true)
+    Citizen.Wait(1000)
+    menu:Visible(false)
+    SetCamActive(camSkin, false)
+    StopRenderingScriptCamsUsingCatchUp(true)]]--
+end
 
 RegisterCommand("finish", function()
     if editor ~= true then
