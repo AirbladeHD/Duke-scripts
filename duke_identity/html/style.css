@@ -86,3 +86,51 @@ body {
 	padding: 5px;
 	font-family: 'Roboto', sans-serif;
 }
+
+#gender {
+	top: 47%;
+	left: 50%;
+	transform: translate(-50%,-40%);
+	position: absolute;
+	width: 400px;
+	padding: 20px;
+	text-align: center;
+	font-size: 18px;
+	font-family: 'Roboto', sans-serif;
+	background-image: linear-gradient(to bottom right,#037007, black);
+	color: white;
+	border-radius: 30px;
+}
+
+#gender p {
+	margin: 5px;
+}
+
+#gender button {
+	margin: 8px;
+	width: 30%;
+	height: 35px;
+	border-radius: 20px;
+	border: none;
+	font-size: 15px;
+	font-weight: bold;
+	transition: 0.4s ease;
+	cursor: pointer;
+}
+
+#male:hover {
+	background-color: #19d21f;
+	color: white;
+}
+
+#female:hover {
+	background-color: #f31313;
+	color: white;
+}
+
+#gender h1 {
+	font-size: 22px;
+	font-weight: 500;
+	padding: 5px;
+	font-family: 'Roboto', sans-serif;
+}
