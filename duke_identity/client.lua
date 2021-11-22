@@ -43,9 +43,10 @@ local function setModel(_model)
             textures = 10,
             torso2 = 11,
         }
+        --SetPedDefaultComponentVariation(PlayerPedId())
         --print(GetNumberOfPedDrawableVariations(playerPed, variations.face))
         --print(GetNumberOfPedTextureVariations(playerPed, variations.face))
-        SetPedComponentVariation(playerPed, variations.head, 0, 1, 2)
+        --SetPedComponentVariation(playerPed, variations.head, 0, 1, 2)
     end
 end
 
@@ -159,6 +160,35 @@ RegisterNUICallback("exit", function(data)
     openEntry(false)
 end)
 
+RegisterNUICallback("male", function(data)
+    SetNuiFocus(false, false)
+    SendNUIMessage({
+        type = "gender",
+        display = false,
+    })
+    currentGender = "male"
+    openEditor()
+end)
+
+RegisterNUICallback("female", function(data)
+    SetNuiFocus(false, false)
+    SendNUIMessage({
+        type = "gender",
+        display = false,
+    })
+    setModel("mp_f_freemode_01")
+    currentGender = "female"
+    openEditor()
+end)
+
+RegisterNUICallback("no", function(data)
+    SetNuiFocus(false, false)
+    SendNUIMessage({
+        type = "confirm",
+        display = false,
+    })
+end)
+
 RegisterNUICallback("no", function(data)
     SetNuiFocus(false, false)
     SendNUIMessage({
@@ -182,7 +212,8 @@ RegisterNUICallback("yes", function(data)
         undershirt = currentUndershirt,
         leg = currentLeg,
         shoe = currentShoe,
-        arms = currentTorso2
+        arms = currentTorso2,
+        gender = currentGender
     }
     TriggerServerEvent('identity:saveStyle', GetPlayerServerId(PlayerId()), style)
     control = true
@@ -193,6 +224,14 @@ RegisterNUICallback("yes", function(data)
     SetCamActive(camSkin, false)
     StopRenderingScriptCamsUsingCatchUp(true)
 end)
+
+function start()
+    SetNuiFocus(true, true)
+    SendNUIMessage({
+        type = "gender",
+        display = true,
+    })
+end
 
 function openEditor()
     editor = true
@@ -469,3 +508,4 @@ end)
 
 exports('openEditor', openEditor)
 exports('openEntry', openEntry)
+exports('start', start)

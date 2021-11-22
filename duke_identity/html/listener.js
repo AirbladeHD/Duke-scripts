@@ -40,4 +40,12 @@ $(function(){
         $.post("http://duke_identity/no", JSON.stringify({}));
         return
     })
+    $("#male").click(function() {
+        $.post("http://duke_identity/male", JSON.stringify({}));
+        return
+    })
+    $("#female").click(function() {
+        $.post("http://duke_identity/female", JSON.stringify({}));
+        return
+    })
 })
