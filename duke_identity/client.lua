@@ -168,8 +168,6 @@ RegisterNUICallback("no", function(data)
 end)
 
 RegisterNUICallback("yes", function(data)
-    name = GetPlayerName(PlayerId())
-    SetConvarReplicated("style"..name, "1")
     editor = false
     SetNuiFocus(false, false)
     SendNUIMessage({

@@ -117,6 +117,7 @@ AddEventHandler('identity:saveStyle', function(user, style)
     },
     function(affectedRows)
         print("Aussehen von "..name.." gespeichert")
+        SetConvarReplicated("style"..name, "1")
     end)
 end)
 
