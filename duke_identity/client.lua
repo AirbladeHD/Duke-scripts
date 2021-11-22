@@ -168,6 +168,8 @@ RegisterNUICallback("no", function(data)
 end)
 
 RegisterNUICallback("yes", function(data)
+    name = GetPlayerName(PlayerId())
+    SetConvarReplicated("style"..name, "1")
     editor = false
     SetNuiFocus(false, false)
     SendNUIMessage({
@@ -196,6 +198,7 @@ end)
 
 function openEditor()
     editor = true
+    control = false
     --SetEntityCoords(PlayerPedId(), -1135.24, -2804.194, 27.70873, true, false, false, false)
         --setModel("mp_m_freemode_01")
         Citizen.CreateThread(function()
