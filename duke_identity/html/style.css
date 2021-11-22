@@ -100,6 +100,7 @@ body {
 	background-image: linear-gradient(to bottom right,#037007, black);
 	color: white;
 	border-radius: 30px;
+	display: none;
 }
 
 #gender p {
@@ -118,13 +119,8 @@ body {
 	cursor: pointer;
 }
 
-#male:hover {
+#gender button:hover {
 	background-color: #19d21f;
-	color: white;
-}
-
-#female:hover {
-	background-color: #f31313;
 	color: white;
 }
 

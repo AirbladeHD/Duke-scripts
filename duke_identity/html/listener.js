@@ -1,6 +1,7 @@
 $(function(){
     $('#container').hide();
     $('#confirm').hide();
+    $('#gender').hide();
     window.onload = function(e) {
         window.addEventListener("message", (event) => {
             var item = event.data;
@@ -16,6 +17,13 @@ $(function(){
                     $('#confirm').show();
                 } else {
                     $('#confirm').hide();
+                }
+            }
+            if(item !== undefined && item.type === "gender") {
+                if(item.display === true) {
+                    $('#gender').show();
+                } else {
+                    $('#gender').hide();
                 }
             }
         })
