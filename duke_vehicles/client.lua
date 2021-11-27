@@ -1,4 +1,6 @@
-menuOpen = false
+DealerOpen = false
+display = false
+SetEntityVisible(PlayerPedId(), true)
 
 function SetDisplay(bool)
     display = bool
@@ -18,9 +20,13 @@ function CreateNoclipVehicle()
         Citizen.Wait(10)
     end
     local MyPed = PlayerPedId()
-    local Vehicle = CreateVehicle(ModelHash, GetEntityCoords(MyPed), GetEntityHeading(MyPed), false, false)
+    local Vehicle = CreateVehicle(ModelHash, -1255.28, -360.2462, 36.90747, 0, 0, 77.42708, false, false)
     SetModelAsNoLongerNeeded(ModelHash)
     SetEntityNoCollisionEntity(MyPed, Vehicle, false)
+    camSkin = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", -1265.507, -352.0551, 37.50749, 0.00, 0.00, 0.00, 15.0, true, 2)
+    PointCamAtEntity(camSkin, Vehicle, 0.0, 0.0, 0.0, true)
+    SetCamActive(camSkin, true)
+    RenderScriptCams(true, false, 0, true, true)
     Citizen.CreateThread(function()
         while true do
             Citizen.Wait(0)
@@ -59,12 +65,15 @@ end)
 function openShop()
     Citizen.CreateThread(function()
         if IsControlJustReleased(0, 38) then
-            menuOpen = true
-
+            DealerOpen = true
+            SetDisplay(true)
+            SetEntityVisible(PlayerPedId(), false)
+            CreateNoclipVehicle()
         end
     end)
 end
 
 RegisterCommand('dealer', function()
-    SetEntityCoords(PlayerPedId(), -1264.507, -359.0551, 36.90749)
+    --SetEntityCoords(PlayerPedId(), -1264.507, -359.0551, 36.90749)
+    SetDisplay(true)
 end)

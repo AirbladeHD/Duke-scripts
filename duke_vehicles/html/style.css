@@ -1,0 +1,349 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.name {
+    width: 100%;
+    height: 100px;
+    clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(3, 112, 7, 1));
+    text-align: center;
+}
+
+.name h1 {
+    color: white;
+    transform: translateY(50%);
+}
+
+.name h1::after {
+    content: " >";
+    color: white
+}
+
+.name h1::before {
+    content: "< ";
+    color: white
+}
+
+.adjustments {
+    min-height: 80vh;
+    width: 17%;
+    margin-right: 2vh;
+    margin-top: 2vh;
+    border-radius: 20px;
+    background-color: rgba(30, 30, 30, 0.8);
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    color: white;
+    position: absolute;
+}
+
+.categories {
+    min-height: 80vh;
+    width: 17%;
+    margin-left: 2vh;
+    margin-top: 2vh;
+    border-radius: 20px;
+    background-color: rgba(30, 30, 30, 0.8);
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    color: white;
+    position: relative;
+    float: right;
+    text-align: center;
+}
+
+.adjustments h1 {
+    font-size: 30px;
+    margin: 2vh;
+    text-align: center;
+}
+
+.categories h1 {
+    font-size: 30px;
+    margin: 2vh;
+}
+
+.categories ul {
+    list-style: none;
+}
+
+.categories li {
+    margin: 3vh;
+    font-size: 25px;
+}
+
+.categories li:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.adjustment {
+    margin: 1.5vh;
+}
+
+.adjustment input {
+    float: right;
+    border: none;
+    width: 25px;
+    background: none;
+    box-shadow: none;
+}
+
+input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+    border: none;
+    margin-right: 0.3vh;
+    -webkit-appearance: none;
+    border-radius: 5px;
+    border: 2px solid rgba(3, 112, 7, 1);
+    background-color: rgba(30, 30, 30, 0.8);
+}
+
+[type="checkbox"]:checked {
+    box-shadow: inset 0px 0px 0px 3px rgba(30, 30, 30, 0.8);
+    background-color: rgba(3, 112, 7, 1);
+  }
+
+.checkout {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.checkout p {
+    font-size: 27px;
+    font-weight: 600;
+    margin: 3vh;
+}
+
+
+#buy {
+    width: 100%;
+    height: 50px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: none;
+    border: none;
+    cursor: pointer;
+    background-color: rgba(30, 30, 30, 0.8);
+    color: white;
+    font-size: 25px;
+    font-weight: 600;
+    transition: 0.4s ease;
+}
+
+#buy:hover {
+    background-color: rgba(3, 112, 7, 1);
+    text-decoration: underline;
+}
+
+.details {
+    width: 40%;
+    height: 150px;
+    position: absolute;
+    transform: translateX(75%);
+    bottom: 10%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+}
+
+.fillers {
+    width: 40%;
+    height: 150px;
+    position: absolute;
+    transform: translateX(75%);
+    bottom: 2%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.detail {
+    width: 40px;
+    height: 40px;
+}
+
+#engine {
+    width: 63px;
+    height: 63px;
+    transform: translate(-25%, -145%) rotate(0deg);
+}
+
+#turbocharger {
+    width: 63px;
+    height: 63px;
+    transform: translate(-20%, -145%) rotate(0deg);
+}
+
+#wheel {
+    width: 63px;
+    height: 63px;
+    transform: translate(-23%, -150%) rotate(0deg);
+}
+
+#steeringwheel {
+    width: 63px;
+    height: 63px;
+    transform: translate(-23%, -150%) rotate(0deg);
+}
+
+.fill {
+    width: 90px;
+    height: 90px;
+    background-color: rgba(30, 30, 30, 0);
+    border-radius: 50%;
+    border: 2vh solid red;
+    font-size: 27px;
+    color: white;
+}
+
+.hp svg {
+    transform: scaleX(-1) translate(50%, -50%) rotate(-90deg);
+}
+
+.hp {
+    max-height: 50px;
+}
+
+.details .hp svg circle {
+    fill: none;
+    stroke-width: 15;
+    stroke: #000;
+    transform: translate(8px, 8px);
+    stroke-dasharray: 314;
+    stroke-dashoffset: 314;
+}
+
+.details .hp svg circle:nth-child(1) {
+    stroke-dashoffset: 0;
+    stroke: rgba(30, 30, 30, 0.8);
+}
+
+.turbo svg {
+    transform: scaleX(-1) translate(50%, -50%) rotate(-90deg);
+}
+
+.turbo {
+    max-height: 50px;
+}
+
+.details .turbo svg circle {
+    fill: none;
+    stroke-width: 15;
+    stroke: #000;
+    transform: translate(8px, 8px);
+    stroke-dasharray: 314;
+    stroke-dashoffset: 314;
+}
+
+.details .turbo svg .c1 {
+    stroke-dashoffset: 0;
+    stroke: rgba(30, 30, 30, 0.8);
+}
+
+.traktion svg {
+    transform: scaleX(-1) translate(50%, -50%) rotate(-90deg);
+}
+
+.traktion {
+    max-height: 50px;
+}
+
+.details .traktion svg circle {
+    fill: none;
+    stroke-width: 15;
+    stroke: #000;
+    transform: translate(8px, 8px);
+    stroke-dasharray: 314;
+    stroke-dashoffset: 314;
+}
+
+.details .traktion svg circle:nth-child(1) {
+    stroke-dashoffset: 0;
+    stroke: rgba(30, 30, 30, 0.8);
+}
+
+.handling svg {
+    transform: scaleX(-1) translate(50%, -50%) rotate(-90deg);
+}
+
+.handling {
+    max-height: 50px;
+}
+
+.details .handling svg circle {
+    fill: none;
+    stroke-width: 15;
+    stroke: #000;
+    transform: translate(8px, 8px);
+    stroke-dasharray: 314;
+    stroke-dashoffset: 314;
+}
+
+.details .handling svg circle:nth-child(1) {
+    stroke-dashoffset: 0;
+    stroke: rgba(30, 30, 30, 0.8);
+}
+
+.e1,.e2,.e3,.e4{fill:none;stroke:#fff;stroke-miterlimit:10;}
+
+.e1{stroke-width:25px;}
+
+.e2{stroke-width:13px;}
+
+.e3{stroke-width:5px;}
+
+.e4{stroke-width:10px;}
+
+.t-1,.t-2{fill:none;stroke:white;stroke-miterlimit:10;stroke-width:25px;}
+
+.t-2{stroke-linecap:round;}
+
+.details .hp svg circle:nth-child(2) {
+    stroke-dashoffset: calc(314*(1 + (75/100)));
+    stroke: red;
+    stroke-linecap: butt;
+}
+
+.details .turbo svg .c2 {
+    stroke-dashoffset: calc(314*(1 + (35/100)));
+    stroke: red;
+    stroke-linecap: butt;
+}
+
+.details .traktion svg circle:nth-child(2) {
+    stroke-dashoffset: calc(314*(1 + (93/100)));
+    stroke: red;
+    stroke-linecap: butt;
+}
+
+.details .handling svg circle:nth-child(2) {
+    stroke-dashoffset: calc(314*(1 + (60/100)));
+    stroke: red;
+    stroke-linecap: butt;
+}
+
+/* If the screen size is 601px wide or more, set the font-size of <div> to 80px */
+@media screen and (min-width: 601px) {
+    .name h1 {
+      font-size: 30px;
+    }
+  }
+  
+  /* If the screen size is 600px wide or less, set the font-size of <div> to 30px */
+  @media screen and (max-width: 600px) {
+    .name h1 {
+      font-size: 30px;
+    }
+  }
