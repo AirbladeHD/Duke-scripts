@@ -15,7 +15,13 @@
 <body>
     <div id="container">
         <div class="name">
-            <h1>Adder</h1>
+            <svg id="arrow_left" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+                <path style="fill: #fff;" d="M809.24,193.07,674.07,461.8l-19.16,38.09L674,538,810.16,810.39,190.52,501.5,809.24,193.07M1000,3,0,501.5,1000,1000,750,500,1000,3Z"/>
+             </svg>
+            <h1 id="vehicle_name">Adder</h1>
+            <svg id="arrow_right" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+                <path style="fill: #fff;" d="M190.76,193.07,809.48,501.5,189.84,810.39,326,538l19.06-38.12L325.93,461.8,190.76,193.07M0,3,250,500,0,1000,1000,501.5,0,3Z"/>
+             </svg>
         </div>
         <div class="adjustments">
             <h1>Anpassungen:</h1>
@@ -32,26 +38,29 @@
                 <input type="checkbox" name="spoiler" id="">
             </div>
             <div class="checkout">
-                <p>Preis: 99999999$</p>
+                <p id="vehicle_price">Preis: 99999999$</p>
                 <button id="buy">Kaufen</button>
             </div>
         </div>
         <div class="categories">
             <h1>Kategorien:</h1>
             <ul>
-                <li>SUV</li>
-                <li>Luxus</li>
-                <li>Sport</li>
-                <li>Supersport</li>
-                <li>Motorräder</li>
+                <li id="suv">SUV</li>
+                <li id="luxus">Luxus</li>
+                <li id="sport">Sport</li>
+                <li id="supersport">Supersport</li>
+                <li id="motorrad">Motorräder</li>
             </ul>
+            <div class="checkout">
+                <button id="abbort">Abbrechen</button>
+            </div>
         </div>
         <div class="details">
             <div class="detail">
                 <div class="hp">
                     <svg>
                         <circle cx="50" cy="50" r="50"></circle>
-                        <circle cx="50" cy="50" r="50"></circle>
+                        <circle id="hp" cx="50" cy="50" r="50"></circle>
                     </svg>
                         <svg id="engine" data-name="engine" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
                             <path class="e1" d="M134.55,597.19H76.28c-.14,0-.25,6.75-.25,15V728.91a15,15,0,0,1-15,15H33a15,15,0,0,1-15-15V370.76a15,15,0,0,1,15-15H61a15,15,0,0,1,15,15V476.07c0,8.25.11,15,.25,15h58.27"/>
@@ -79,7 +88,7 @@
                 <div class="turbo">
                     <svg>
                         <circle class="c1" cx="50" cy="50" r="50"></circle>
-                        <circle class="c2" cx="50" cy="50" r="50"></circle>
+                        <circle id="turbo" class="c2" cx="50" cy="50" r="50"></circle>
                     </svg>
                     <svg id="turbocharger" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
                         <circle class="t-1" style="stroke:white; stroke-dasharray: 0; stroke-dashoffset: 0;" cx="510.39" cy="500.85" r="219.03"/>
@@ -102,7 +111,7 @@
                 <div class="traktion">
                     <svg>
                         <circle cx="50" cy="50" r="50"></circle>
-                        <circle cx="50" cy="50" r="50"></circle>
+                        <circle id="traktion" cx="50" cy="50" r="50"></circle>
                     </svg>
                     <svg id="wheel" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
                         <defs>
@@ -135,7 +144,7 @@
                 <div class="handling">
                     <svg>
                         <circle cx="50" cy="50" r="50"></circle>
-                        <circle cx="50" cy="50" r="50"></circle>
+                        <circle id="handling" cx="50" cy="50" r="50"></circle>
                     </svg>
                     <svg id="steeringwheel" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
                         <defs>
