@@ -25,6 +25,15 @@
 .name svg {
     width: 30px;
     cursor: pointer;
+    position: absolute;
+}
+
+#arrow_left {
+    transform: translateX(-2500%);
+}
+
+#arrow_right {
+    transform: translateX(2500%);
 }
 
 .adjustments {

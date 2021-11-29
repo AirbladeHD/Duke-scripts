@@ -1,6 +1,8 @@
 DealerOpen = false
 display = false
 SetEntityVisible(PlayerPedId(), true)
+SetEntityCollision(PlayerPedId(), true, true)
+FreezeEntityPosition(PlayerPedId(), false)
 currentCategorie = 1
 
 for i=1, #Config.Dealers, 1 do
@@ -30,7 +32,8 @@ function switchVehicle(direction, currentVehicle)
             turbo = Config.Categories[currentCategorie].vehicles[currentVehicle].turbo,
             traktion = Config.Categories[currentCategorie].vehicles[currentVehicle].traktion,
             handling = Config.Categories[currentCategorie].vehicles[currentVehicle].handling,
-            name = Config.Categories[currentCategorie].vehicles[currentVehicle].name
+            name = Config.Categories[currentCategorie].vehicles[currentVehicle].name,
+            brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand
         })
     end
     if(direction == "left") then
@@ -47,12 +50,15 @@ function switchVehicle(direction, currentVehicle)
             turbo = Config.Categories[currentCategorie].vehicles[currentVehicle].turbo,
             traktion = Config.Categories[currentCategorie].vehicles[currentVehicle].traktion,
             handling = Config.Categories[currentCategorie].vehicles[currentVehicle].handling,
-            name = Config.Categories[currentCategorie].vehicles[currentVehicle].name
+            name = Config.Categories[currentCategorie].vehicles[currentVehicle].name,
+            brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand
         })
     end
 end
 
 function SetDisplay(bool, num)
+    currentCategorie = 1
+    currentVehicle = 1
     display = bool
     SetNuiFocus(bool, bool)
     SendNUIMessage({
@@ -60,6 +66,7 @@ function SetDisplay(bool, num)
         display = bool,
         price = Config.Categories[1].vehicles[1].price,
         name = Config.Categories[1].vehicles[1].name,
+        brand = Config.Categories[1].vehicles[1].brand,
         hp = Config.Categories[1].vehicles[1].hp,
         turbo = Config.Categories[1].vehicles[1].turbo,
         traktion = Config.Categories[1].vehicles[1].traktion,
@@ -72,10 +79,37 @@ RegisterNUICallback("switch", function(data)
     switchVehicle(data.d, data.c)
 end)
 
+RegisterNUICallback("switch_cat", function(data)
+    if currentCategorie == data.cat then
+        return
+    end
+    currentCategorie = data.cat
+    currentVehicle = 1
+    CreateNoclipVehicle(Config.Categories[currentCategorie].vehicles[currentVehicle].name)
+    SendNUIMessage({
+        type = "update",
+        num = currentVehicle,
+        price = Config.Categories[currentCategorie].vehicles[currentVehicle].price,
+        hp = Config.Categories[currentCategorie].vehicles[currentVehicle].hp,
+        turbo = Config.Categories[currentCategorie].vehicles[currentVehicle].turbo,
+        traktion = Config.Categories[currentCategorie].vehicles[currentVehicle].traktion,
+        handling = Config.Categories[currentCategorie].vehicles[currentVehicle].handling,
+        name = Config.Categories[currentCategorie].vehicles[currentVehicle].name,
+        brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand
+    })
+end)
+
+function hex2rgb(hex)
+    hex = hex:gsub("#","")
+    return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))
+end
+
 RegisterNUICallback("exit", function()
     DealerOpen = false
     SetDisplay(false)
     SetEntityVisible(PlayerPedId(), true)
+    SetEntityCollision(PlayerPedId(), true, true)
+    FreezeEntityPosition(PlayerPedId(), false)
     PointCamAtEntity(camSkin, PlayerPedId(), 0.0, 0.0, 0.0, true)
     Citizen.Wait(100)
     SetCamActive(camSkin, false)
@@ -84,6 +118,16 @@ RegisterNUICallback("exit", function()
     if Vehicle then
         DeleteVehicle(Vehicle)
     end
+end)
+
+RegisterNUICallback("primary", function(data)
+    local r, g, b = hex2rgb(data.color)
+    SetVehicleCustomPrimaryColour(Vehicle, r, g, b)
+end)
+
+RegisterNUICallback("secondary", function(data)
+    local r, g, b = hex2rgb(data.color)
+    SetVehicleCustomSecondaryColour(Vehicle, r, g, b)
 end)
 
 function CreateNoclipVehicle(model)
@@ -142,6 +186,8 @@ function openShop()
             DealerOpen = true
             SetDisplay(true, 1)
             SetEntityVisible(PlayerPedId(), false)
+            SetEntityCollision(PlayerPedId(), false, false)
+            FreezeEntityPosition(PlayerPedId(), true)
             CreateNoclipVehicle(Config.Categories[currentCategorie].vehicles[1].name)
             camSkin = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", -1265.507, -352.0551, 37.50749, 0.00, 0.00, 0.00, 19.0, true, 2)
             PointCamAtEntity(camSkin, Vehicle, 0.0, 0.0, 0.0, true)
@@ -155,17 +201,8 @@ RegisterCommand('dealer', function()
     --SetEntityCoords(PlayerPedId(), -1264.507, -359.0551, 36.90749)
     --SetDisplay(true)
     --CreateNoclipVehicle(Config.Categories[currentCategorie][1].name)
-    local gameCamRot = GetGameplayCamRot(0)
-    local cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", GetEntityCoords(PlayerPedId()), gameCamRot.x, gameCamRot.y, gameCamRot.z, GetGameplayCamFov())
-    SetCamActive(cam, true)
-    RenderScriptCams(true, false, 0, true, false)
-    local offsetCoords = GetOffsetFromEntityGivenWorldCoords(PlayerPedId(), GetGameplayCamCoord())
-    AttachCamToEntity(cam, PlayerPedId(), offsetCoords, false)
-    Citizen.CreateThread(function ()
-        while IsCamActive(cam) do
-            Wait(0)
-            local rot = GetGameplayCamRot(0)
-            SetCamParams(cam, GetEntityCoords(PlayerPedId()),rot.x, rot.y, rot.z, GetGameplayCamFov())
-        end
-    end)
+    --SetVehicleCustomPrimaryColour(Vehicle, 3, 112, 7)
+    SetVehicleModKit(Vehicle, 0)
+    local bestMod = GetNumVehicleMods(Vehicle, 0) - 1
+    SetVehicleMod(Vehicle, 0, 14, false)
 end)
