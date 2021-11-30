@@ -4,6 +4,12 @@ SetEntityVisible(PlayerPedId(), true)
 SetEntityCollision(PlayerPedId(), true, true)
 FreezeEntityPosition(PlayerPedId(), false)
 currentCategorie = 1
+default_pr = 0
+default_pg = 0
+default_pb = 0
+default_sr = 0
+default_sg = 0
+default_sb = 0
 
 for i=1, #Config.Dealers, 1 do
     local blip = AddBlipForCoord(Config.Dealers[i].x, Config.Dealers[i].y, Config.Dealers[i].z)
@@ -24,6 +30,11 @@ function switchVehicle(direction, currentVehicle)
             currentVehicle = 1
         end
         CreateNoclipVehicle(Config.Categories[currentCategorie].vehicles[currentVehicle].name)
+        modCount = {}
+        for i = 1, #Config.Categories[currentCategorie].vehicles[currentVehicle].mods, 1 do
+            count = GetNumVehicleMods(Vehicle, Config.Categories[currentCategorie].vehicles[currentVehicle].mods[i]) - 1
+            table.insert(modCount, count)
+        end
         SendNUIMessage({
             type = "update",
             num = currentVehicle,
@@ -33,7 +44,9 @@ function switchVehicle(direction, currentVehicle)
             traktion = Config.Categories[currentCategorie].vehicles[currentVehicle].traktion,
             handling = Config.Categories[currentCategorie].vehicles[currentVehicle].handling,
             name = Config.Categories[currentCategorie].vehicles[currentVehicle].name,
-            brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand
+            mods = Config.Categories[currentCategorie].vehicles[currentVehicle].mods,
+            modCount = modCount,
+            brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand,
         })
     end
     if(direction == "left") then
@@ -42,6 +55,11 @@ function switchVehicle(direction, currentVehicle)
             currentVehicle = #Config.Categories[currentCategorie].vehicles
         end
         CreateNoclipVehicle(Config.Categories[currentCategorie].vehicles[currentVehicle].name)
+        modCount = {}
+        for i = 1, #Config.Categories[currentCategorie].vehicles[currentVehicle].mods, 1 do
+            count = GetNumVehicleMods(Vehicle, Config.Categories[currentCategorie].vehicles[currentVehicle].mods[i]) - 1
+            table.insert(modCount, count)
+        end
         SendNUIMessage({
             type = "update",
             num = currentVehicle,
@@ -51,7 +69,31 @@ function switchVehicle(direction, currentVehicle)
             traktion = Config.Categories[currentCategorie].vehicles[currentVehicle].traktion,
             handling = Config.Categories[currentCategorie].vehicles[currentVehicle].handling,
             name = Config.Categories[currentCategorie].vehicles[currentVehicle].name,
-            brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand
+            mods = Config.Categories[currentCategorie].vehicles[currentVehicle].mods,
+            modCount = modCount,
+            brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand,
+        })
+    end
+    if direction == "reload" then
+        CreateNoclipVehicle(Config.Categories[currentCategorie].vehicles[currentVehicle].name)
+        modCount = {}
+        for i = 1, #Config.Categories[currentCategorie].vehicles[currentVehicle].mods, 1 do
+            count = GetNumVehicleMods(Vehicle, Config.Categories[currentCategorie].vehicles[currentVehicle].mods[i]) - 1
+            table.insert(modCount, count)
+        end
+        SendNUIMessage({
+            type = "update",
+            num = currentVehicle,
+            price = Config.Categories[currentCategorie].vehicles[currentVehicle].price,
+            hp = Config.Categories[currentCategorie].vehicles[currentVehicle].hp,
+            turbo = Config.Categories[currentCategorie].vehicles[currentVehicle].turbo,
+            traktion = Config.Categories[currentCategorie].vehicles[currentVehicle].traktion,
+            handling = Config.Categories[currentCategorie].vehicles[currentVehicle].handling,
+            name = Config.Categories[currentCategorie].vehicles[currentVehicle].name,
+            mods = Config.Categories[currentCategorie].vehicles[currentVehicle].mods,
+            modCount = modCount,
+            brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand,
+            reset = 0
         })
     end
 end
@@ -61,6 +103,11 @@ function SetDisplay(bool, num)
     currentVehicle = 1
     display = bool
     SetNuiFocus(bool, bool)
+    modCount = {}
+    for i = 1, #Config.Categories[1].vehicles[1].mods, 1 do
+        count = GetNumVehicleMods(Vehicle, Config.Categories[1].vehicles[1].mods[i]) - 1
+        table.insert(modCount, count)
+    end
     SendNUIMessage({
         type = "ui",
         display = bool,
@@ -71,9 +118,20 @@ function SetDisplay(bool, num)
         turbo = Config.Categories[1].vehicles[1].turbo,
         traktion = Config.Categories[1].vehicles[1].traktion,
         handling = Config.Categories[1].vehicles[1].handling,
+        mods = Config.Categories[1].vehicles[1].mods,
+        modCount = modCount,
         num = num,
     })
 end
+
+RegisterNUICallback("reloadMods", function(data)
+    CreateNoclipVehicle(Config.Categories[currentCategorie].vehicles[data.c].name)
+end)
+
+RegisterNUICallback("switch_mod", function(data)
+    SetVehicleModKit(Vehicle, 0)
+    SetVehicleMod(Vehicle, data.m, data.c, false)
+end)
 
 RegisterNUICallback("switch", function(data)
     switchVehicle(data.d, data.c)
@@ -86,6 +144,11 @@ RegisterNUICallback("switch_cat", function(data)
     currentCategorie = data.cat
     currentVehicle = 1
     CreateNoclipVehicle(Config.Categories[currentCategorie].vehicles[currentVehicle].name)
+    modCount = {}
+    for i = 1, #Config.Categories[currentCategorie].vehicles[currentVehicle].mods, 1 do
+        count = GetNumVehicleMods(Vehicle, Config.Categories[currentCategorie].vehicles[currentVehicle].mods[i]) - 1
+        table.insert(modCount, count)
+    end
     SendNUIMessage({
         type = "update",
         num = currentVehicle,
@@ -95,7 +158,9 @@ RegisterNUICallback("switch_cat", function(data)
         traktion = Config.Categories[currentCategorie].vehicles[currentVehicle].traktion,
         handling = Config.Categories[currentCategorie].vehicles[currentVehicle].handling,
         name = Config.Categories[currentCategorie].vehicles[currentVehicle].name,
-        brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand
+        brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand,
+        mods = Config.Categories[currentCategorie].vehicles[currentVehicle].mods,
+        modCount = modCount,
     })
 end)
 
@@ -142,9 +207,14 @@ function CreateNoclipVehicle(model)
     end
     local MyPed = PlayerPedId()
     Vehicle = CreateVehicle(ModelHash, -1255.28, -360.2462, 36.90747, 0, 0, 77.42708, false, false)
+    SetVehicleModKit(Vehicle, 0)
+    spoilers = GetNumVehicleMods(Vehicle, 0) - 1
     SetModelAsNoLongerNeeded(ModelHash)
     SetEntityCollision(Vehicle, false, false)
     FreezeEntityPosition(Vehicle, true)
+    --SetVehicleCustomPrimaryColour(Vehicle, 0, 0, 0)
+    --SetVehicleCustomSecondaryColour(Vehicle, 0, 0, 0)
+    SetVehicleColours(Vehicle, 0, 0)
     Citizen.CreateThread(function()
         while true do
             Citizen.Wait(0)
@@ -184,11 +254,11 @@ function openShop()
     Citizen.CreateThread(function()
         if IsControlJustReleased(0, 38) then
             DealerOpen = true
-            SetDisplay(true, 1)
             SetEntityVisible(PlayerPedId(), false)
             SetEntityCollision(PlayerPedId(), false, false)
             FreezeEntityPosition(PlayerPedId(), true)
             CreateNoclipVehicle(Config.Categories[currentCategorie].vehicles[1].name)
+            SetDisplay(true, 1)
             camSkin = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", -1265.507, -352.0551, 37.50749, 0.00, 0.00, 0.00, 19.0, true, 2)
             PointCamAtEntity(camSkin, Vehicle, 0.0, 0.0, 0.0, true)
             SetCamActive(camSkin, true)
@@ -203,6 +273,7 @@ RegisterCommand('dealer', function()
     --CreateNoclipVehicle(Config.Categories[currentCategorie][1].name)
     --SetVehicleCustomPrimaryColour(Vehicle, 3, 112, 7)
     SetVehicleModKit(Vehicle, 0)
-    local bestMod = GetNumVehicleMods(Vehicle, 0) - 1
-    SetVehicleMod(Vehicle, 0, 14, false)
+    --local bestMod = GetNumVehicleMods(Vehicle, 0)
+    --print(bestMod)
+    SetVehicleMod(Vehicle, 0, 0, false)
 end)
