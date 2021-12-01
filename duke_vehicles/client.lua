@@ -23,6 +23,12 @@ for i=1, #Config.Dealers, 1 do
     EndTextCommandSetBlipName(blip)
 end
 
+function ShowNotification(text)
+	SetNotificationTextEntry('STRING')
+    AddTextComponentString(text)
+	DrawNotification(false, true)
+end
+
 function switchVehicle(direction, currentVehicle)
     if(direction == "right") then
         currentVehicle = currentVehicle + 1
@@ -35,6 +41,7 @@ function switchVehicle(direction, currentVehicle)
             count = GetNumVehicleMods(Vehicle, Config.Categories[currentCategorie].vehicles[currentVehicle].mods[i]) - 1
             table.insert(modCount, count)
         end
+        print(json.encode(modCount))
         SendNUIMessage({
             type = "update",
             num = currentVehicle,
@@ -60,6 +67,7 @@ function switchVehicle(direction, currentVehicle)
             count = GetNumVehicleMods(Vehicle, Config.Categories[currentCategorie].vehicles[currentVehicle].mods[i]) - 1
             table.insert(modCount, count)
         end
+        print(json.encode(modCount))
         SendNUIMessage({
             type = "update",
             num = currentVehicle,
@@ -124,8 +132,51 @@ function SetDisplay(bool, num)
     })
 end
 
+RegisterNetEvent('buyVehicleCallback')
+AddEventHandler('buyVehicleCallback', function(msg)
+    ShowNotification(msg)
+end)
+
+RegisterNUICallback("buy", function(data)
+    player = GetPlayerServerId(PlayerId())
+    DealerOpen = false
+    SetDisplay(false)
+    SetEntityVisible(PlayerPedId(), true)
+    SetEntityCollision(PlayerPedId(), true, true)
+    FreezeEntityPosition(PlayerPedId(), false)
+    PointCamAtEntity(camSkin, PlayerPedId(), 0.0, 0.0, 0.0, true)
+    Citizen.Wait(100)
+    SetCamActive(camSkin, false)
+    StopRenderingScriptCamsUsingCatchUp(true)
+    EnableControlAction(PlayerPedId(), 23, true)
+    if Vehicle then
+        DeleteVehicle(Vehicle)
+    end
+    mods = {}
+    for i = 1, #data.mods, 1 do
+        if(data.mods[i][2] ~= 0) then
+            table.insert(mods, {i-1, data.mods[i][2]-1})
+        end
+    end
+    if #mods == 0 then
+        mods = "default"
+    end
+    conf = {
+        data.primary,
+        data.secondary,
+        mods
+    }
+    TriggerServerEvent('buyVehicle', player, data.p, data.n, data.m, conf)
+end)
+
 RegisterNUICallback("reloadMods", function(data)
     CreateNoclipVehicle(Config.Categories[currentCategorie].vehicles[data.c].name)
+    SetVehicleModKit(Vehicle, 0)
+    for i = 1, #data.mods, 1 do
+        if(data.mods[i][2] ~= 0) then
+            SetVehicleMod(Vehicle, i-1, data.mods[i][2], false)
+        end
+    end
 end)
 
 RegisterNUICallback("switch_mod", function(data)
@@ -208,12 +259,9 @@ function CreateNoclipVehicle(model)
     local MyPed = PlayerPedId()
     Vehicle = CreateVehicle(ModelHash, -1255.28, -360.2462, 36.90747, 0, 0, 77.42708, false, false)
     SetVehicleModKit(Vehicle, 0)
-    spoilers = GetNumVehicleMods(Vehicle, 0) - 1
     SetModelAsNoLongerNeeded(ModelHash)
     SetEntityCollision(Vehicle, false, false)
     FreezeEntityPosition(Vehicle, true)
-    --SetVehicleCustomPrimaryColour(Vehicle, 0, 0, 0)
-    --SetVehicleCustomSecondaryColour(Vehicle, 0, 0, 0)
     SetVehicleColours(Vehicle, 0, 0)
     Citizen.CreateThread(function()
         while true do
@@ -266,14 +314,3 @@ function openShop()
         end
     end)
 end
-
-RegisterCommand('dealer', function()
-    --SetEntityCoords(PlayerPedId(), -1264.507, -359.0551, 36.90749)
-    --SetDisplay(true)
-    --CreateNoclipVehicle(Config.Categories[currentCategorie][1].name)
-    --SetVehicleCustomPrimaryColour(Vehicle, 3, 112, 7)
-    SetVehicleModKit(Vehicle, 0)
-    --local bestMod = GetNumVehicleMods(Vehicle, 0)
-    --print(bestMod)
-    SetVehicleMod(Vehicle, 0, 0, false)
-end)
