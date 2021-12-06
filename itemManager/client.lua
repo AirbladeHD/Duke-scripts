@@ -1,6 +1,6 @@
 local id = GetPlayerServerId(PlayerId())
 --InvAddItem("Joint", 10, id)
-InvRegisterItem('Medkit2', 'Ein Erste-Hilfe-Set um dich zu heilen',
+InvRegisterItem('Medkit', 'Ein Erste-Hilfe-Set um dich zu heilen',
     [[RequestAnimDict("amb@world_human_stand_fishing@idle_a")
     if GetVehiclePedIsIn(playerPed, false) ~= 0 then 
         return

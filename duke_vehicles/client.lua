@@ -41,7 +41,6 @@ function switchVehicle(direction, currentVehicle)
             count = GetNumVehicleMods(Vehicle, Config.Categories[currentCategorie].vehicles[currentVehicle].mods[i]) - 1
             table.insert(modCount, count)
         end
-        print(json.encode(modCount))
         SendNUIMessage({
             type = "update",
             num = currentVehicle,
@@ -54,6 +53,7 @@ function switchVehicle(direction, currentVehicle)
             mods = Config.Categories[currentCategorie].vehicles[currentVehicle].mods,
             modCount = modCount,
             brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand,
+            displayName = Config.Categories[currentCategorie].vehicles[currentVehicle].displayName
         })
     end
     if(direction == "left") then
@@ -67,7 +67,6 @@ function switchVehicle(direction, currentVehicle)
             count = GetNumVehicleMods(Vehicle, Config.Categories[currentCategorie].vehicles[currentVehicle].mods[i]) - 1
             table.insert(modCount, count)
         end
-        print(json.encode(modCount))
         SendNUIMessage({
             type = "update",
             num = currentVehicle,
@@ -80,6 +79,7 @@ function switchVehicle(direction, currentVehicle)
             mods = Config.Categories[currentCategorie].vehicles[currentVehicle].mods,
             modCount = modCount,
             brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand,
+            displayName = Config.Categories[currentCategorie].vehicles[currentVehicle].displayName
         })
     end
     if direction == "reload" then
@@ -101,6 +101,7 @@ function switchVehicle(direction, currentVehicle)
             mods = Config.Categories[currentCategorie].vehicles[currentVehicle].mods,
             modCount = modCount,
             brand = Config.Categories[currentCategorie].vehicles[currentVehicle].brand,
+            displayName = Config.Categories[currentCategorie].vehicles[currentVehicle].displayName,
             reset = 0
         })
     end
@@ -128,6 +129,7 @@ function SetDisplay(bool, num)
         handling = Config.Categories[1].vehicles[1].handling,
         mods = Config.Categories[1].vehicles[1].mods,
         modCount = modCount,
+        displayName = Config.Categories[1].vehicles[1].displayName,
         num = num,
     })
 end
@@ -166,7 +168,7 @@ RegisterNUICallback("buy", function(data)
         data.secondary,
         mods
     }
-    TriggerServerEvent('buyVehicle', player, data.p, data.n, data.m, conf)
+    TriggerServerEvent('buyVehicle', player, data.p, data.n, data.m, conf, data.dn)
 end)
 
 RegisterNUICallback("reloadMods", function(data)

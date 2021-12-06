@@ -80,7 +80,7 @@ RegisterCommand('additem', function(source, args, raw)
     elseif tonumber(args[2]) < 0 then
         ShowNotification("Die Menge muss größer als 0 sein")
     else
-        TriggerServerEvent('inv:additem', args[1], args[2], id)
+        TriggerServerEvent('inv:addItem', args[1], args[2], id)
     end
     --local inventory = {Trauben = {name = "Trauben", amount = 10}, Apfel = {name = "Apfel", amount = 20}}
     --local tab = {name = "Trauben", amount = 10}

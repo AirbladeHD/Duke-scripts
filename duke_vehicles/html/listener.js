@@ -5,6 +5,7 @@ var modCount = 0
 var current = -1
 var i = 0
 var currentList = {}
+var spawnName = ""
 
 var mods_list = [
     ["Spoiler", 0],
@@ -16,7 +17,7 @@ var mods_list = [
     ["Kühler", 0],
     ["Haube", 0],
     ["Flügel_L", 0],
-    ["Flügel_R", 0],
+    ["Flügel", 0],
     ["Dach", 0],
     ["Motor", 0],
     ["Bremsen", 0],
@@ -30,7 +31,7 @@ var mods_list = [
     ["Qualm", 0],
     ["Hydraulik", 0],
     ["Xenon", 0],
-    ["Räder", 0],
+    ["Felgen", 0],
     ["Räder_H", 0],
     ["Kennzeichenhalter", 0],
     ["Customkennzeichen", 0],
@@ -61,7 +62,7 @@ var mods_list = [
 
 function switchMod(item, d) {
     mods_list[item][1] = mods_list[item][1] + d;
-    if(mods_list[item][1] > currentList.indexOf(item)) {
+    if(mods_list[item][1] > mods_list[item][2]) {
         mods_list[item][1] = 0
         $('#' + mods_list[item][0]).html("Standart " + mods_list[item][0]);
                 $.post("http://duke_vehicles/reloadMods", JSON.stringify({
@@ -79,9 +80,9 @@ function switchMod(item, d) {
         return
     }
     if(mods_list[item][1] < 0) {
-        mods_list[item][1] = modCount[item];
+        mods_list[item][1] = mods_list[item][2];
     }
-    $('#' + mods_list[item][0]).html(mods_list[item][0] + ": " + mods_list[item][1] + "/" + modCount[item]);
+    $('#' + mods_list[item][0]).html(mods_list[item][0] + ": " + mods_list[item][1] + "/" + mods_list[item][2]);
     $.post("http://duke_vehicles/switch_mod", JSON.stringify({
         m: item,
         c: mods_list[item][1]
@@ -109,10 +110,15 @@ $(function(){
                 traktion.style.strokeDashoffset = 314*(1 + (item.traktion/1000));
                 handling.style.strokeDashoffset = 314*(1 + (item.handling/1000));
                 modCount = item.modCount;
+                spawnName = item.name
                 $('#mods tr').remove();
                 item.mods.forEach(resetList);
                 $('#vehicle_price').html("Preis: " + item.price + "$");
-                $('#vehicle_name').html(item.brand + " " + item.name);
+                if(item.displayName) {
+                    $('#vehicle_name').html(item.brand + " " + item.displayName);
+                } else {
+                    $('#vehicle_name').html(item.brand + " " + item.name);
+                }
                 i = 0;
                 currentList = {}
                 item.mods.forEach(appendMods);
@@ -136,17 +142,20 @@ $(function(){
                 traktion.style.strokeDashoffset = 314*(1 + (item.traktion/1000));
                 handling.style.strokeDashoffset = 314*(1 + (item.handling/1000));
                 modCount = item.modCount;
+                spawnName = item.name
                 if(item.reset != 0) {
                     $('#mods tr').remove();
                     item.mods.forEach(resetList);
                     i = 0;
-                    currentList = {}
                     item.mods.forEach(appendMods);
                     i = 0;
-                    currentList = {}
                 }
                 $('#vehicle_price').html("Preis: " + item.price + "$");
-                $('#vehicle_name').html(item.brand + " " + item.name);
+                if(item.displayName) {
+                    $('#vehicle_name').html(item.brand + " " + item.displayName);
+                } else {
+                    $('#vehicle_name').html(item.brand + " " + item.name);
+                }
             }
         })
     }
@@ -157,7 +166,11 @@ $(function(){
             if(modCount[i] == 0) {
                 modCount[i] = 1;
             }
-            currentList.push(item)
+            if(mods_list[item][2]) {
+                mods_list[item][2] = modCount[i]
+            } else {
+                mods_list[item].push(modCount[i])
+            }
             i += 1
             $('#mods').append('<tr><td><div class="adjustment_switcher"><svg id="left_' + item + '" onClick="switchMod(' + item + ', -1)" class="left" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path style="fill: #fff;" d="M809.24,193.07,674.07,461.8l-19.16,38.09L674,538,810.16,810.39,190.52,501.5,809.24,193.07M1000,3,0,501.5,1000,1000,750,500,1000,3Z"/></svg><p id="' + mods_list[item][0] + '">Standart ' + mods_list[item][0] + '</p><svg id="right_' + item + '" onClick="switchMod(' + item + ', 1)" class="right" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path style="fill: #fff;" d="M190.76,193.07,809.48,501.5,189.84,810.39,326,538l19.06-38.12L325.93,461.8,190.76,193.07M0,3,250,500,0,1000,1000,501.5,0,3Z"/></svg></div></td></tr>')
         }
@@ -177,8 +190,10 @@ $(function(){
     $('#buy').click(function(){
         $('#mods tr').remove();
         vname = $('#vehicle_name').text().split(" ")
+        dname = $('#vehicle_name').text().replace(vname[0], " ").trim()
         $.post("http://duke_vehicles/buy", JSON.stringify({
-            n: vname[1],
+            dn: dname,
+            n: spawnName,
             m: vname[0],
             p: $('#vehicle_price').text(),
             primary: $('#primary').val(),
