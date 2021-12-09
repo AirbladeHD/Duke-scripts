@@ -1,0 +1,7 @@
+RegisterServerEvent("loadVehicles")
+AddEventHandler("loadVehicles", function(player)
+    local license = GetPlayerIdentifier(player, 0)
+    MySQL.Async.fetchAll('SELECT * FROM vehicles WHERE owner = @license', { ['@license'] = license }, function(result)
+        TriggerClientEvent("loadVehiclesCallback", player, result)
+    end)
+end)
