@@ -10,7 +10,7 @@ $(function(){
                     $('#container').show();
                     vehicles = item.vehicles
                     vehicles.forEach(function(e) {
-                        $('#vehicles').append("<div class='element' id='" + e['name'] + "'></div>")
+                        $('#vehicles').append("<div class='element' id='" + e['name'] + "_" + e[config[0]] + "'></div>")
                     })
                 } else {
                     $('#container').hide();
