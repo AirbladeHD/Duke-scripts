@@ -1,0 +1,76 @@
+body {
+    overflow: hidden;
+    /* Hide scrollbars */
+}
+
+#phone {
+    padding: 0px;
+    margin: 0px;
+    position: absolute;
+    left: calc(100% - 20vw - 5%);
+    top: 100%;
+    z-index: 5;
+    width: 20vw;
+    height: calc(20vw * 1.78);
+    background-image: url("phone.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    -webkit-transition: all 500ms ease-out 0.5s;
+    -moz-transition: all 500ms ease-out 0.5s;
+    -o-transition: all 500ms ease-out 0.5s;
+    transition: all 500ms ease-out 0.5s;
+}
+
+#screen {
+    padding: 0px;
+    margin: 0px;
+    position: absolute;
+    left: 4.65%;
+    top: 7.9%;
+    z-index: 100;
+    width: calc(100% - 9.2%);
+    height: calc(100% - 14.5%);
+    background-image: url("bg2.jpg");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    box-sizing: border-box;
+}
+
+.thumbnails {
+    overflow: hidden;
+}
+
+.thumbnails li {
+    float: left;
+    width: 25%;
+    position: relative;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.thumbnails li img {
+    width: 100%;
+    display: block;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}

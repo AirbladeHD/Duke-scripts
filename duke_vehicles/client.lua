@@ -11,6 +11,11 @@ default_sr = 0
 default_sg = 0
 default_sb = 0
 
+categories = {
+    "suv",
+    "supersport"
+}
+
 for i=1, #Config.Dealers, 1 do
     local blip = AddBlipForCoord(Config.Dealers[i].x, Config.Dealers[i].y, Config.Dealers[i].z)
     SetBlipSprite(blip, 225)
@@ -108,8 +113,10 @@ function switchVehicle(direction, currentVehicle)
 end
 
 function SetDisplay(bool, num)
-    currentCategorie = 1
-    currentVehicle = 1
+    if bool == true then
+        currentCategorie = 1
+        currentVehicle = 1
+    end
     display = bool
     SetNuiFocus(bool, bool)
     modCount = {}
@@ -168,7 +175,9 @@ RegisterNUICallback("buy", function(data)
         data.secondary,
         mods
     }
-    TriggerServerEvent('buyVehicle', player, data.p, data.n, data.m, conf, data.dn)
+    TriggerServerEvent('buyVehicle', player, data.p, data.n, data.m, conf, data.dn, categories[currentCategorie])
+    currentCategorie = 1
+    currentVehicle = 1
 end)
 
 RegisterNUICallback("reloadMods", function(data)
@@ -278,6 +287,14 @@ function CreateNoclipVehicle(model)
         end
     end)
 end
+
+RegisterCommand("owner", function()
+    TriggerServerEvent("getowner", Vehicle)
+end)
+
+RegisterNetEvent("delete", function(vehicle)
+    DeleteVehicle(vehicle)
+end)
 
 Citizen.CreateThread(function()
     while true do

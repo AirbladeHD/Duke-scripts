@@ -38,6 +38,8 @@ Config.Categories = {
         {name = "Prior", brand = "Tesla", price = 20000, hp = 900, turbo = 0, traktion = 800, handling = 750, mods = all},
         {name = "bolide", displayName = "Bolide", brand = "Bugatti", price = 20000, hp = 540, turbo = 300, traktion = 200, handling = 210, mods = all},
         {name = "benze55", displayName = "E55 AMG", brand = "Mercedes-Benz", price = 340000, hp = 540, turbo = 300, traktion = 200, handling = 210, mods = all},
+        {name = "r820", displayName = "R8", brand = "Audi", price = 240000, hp = 350, turbo = 300, traktion = 500, handling = 900, mods = all},
+        {name = "rs3lms", displayName = "RS3", brand = "Audi", price = 240000, hp = 350, turbo = 300, traktion = 500, handling = 900, mods = all},
         {name = "Bullet", brand = "Vapid", price = 2400000, hp = 230, turbo = 500, traktion = 600, handling = 500, mods = {0, 1, 2, 3, 4}}}
     }
 }

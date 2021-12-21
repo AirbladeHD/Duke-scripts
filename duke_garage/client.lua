@@ -10,7 +10,7 @@ end
 RegisterCommand('garage', function(source, args, raw)
     local player = GetPlayerServerId(PlayerId())
     TriggerServerEvent("loadVehicles", player)
-    --SetDisplay(true)
+    SetDisplay(true)
 end)
 
 RegisterNetEvent("loadVehiclesCallback")
