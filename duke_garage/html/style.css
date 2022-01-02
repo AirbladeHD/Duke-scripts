@@ -3,6 +3,11 @@ body {
     padding: 0;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
+    user-select: none; /* supported by Chrome and Opera */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
 #container {
@@ -14,10 +19,10 @@ body {
     width: 70%;
     height: 70%;
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-direction: column;
     border-radius: 30px;
+    z-index: -1;
 }
 
 .element {
@@ -29,18 +34,21 @@ body {
     height: 12vh;
     margin: 2.3vh;
     position: relative;
+    z-index: 100;
 }
 
 .element svg {
     width: 95%;
 }
 
+button {
+    outline: none;
+}
+
 .element p {
-	font-size: 25px;
+	font-size: 1.0vw;
     font-weight: 700;
-    position: absolute;
-    bottom: -40%;
-    transform: translateX(80%);
+    transform: translateY(-35%);
 	display: none;
 }
 
@@ -52,6 +60,26 @@ body {
 	border: 1px solid white;
 }
 
+#close {
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    font-weight: bolder;
+    width: 50px;
+    height: 35px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: 0.4s ease;
+    color: white;
+    border-top-right-radius: 30px;
+    border-bottom-left-radius: 15px;
+    outline: none;
+}
+
+#close:hover {
+    background-color: red;
+}
+
 #vehicles {
     display: flex;
     flex-direction: row;
@@ -60,6 +88,7 @@ body {
     overflow-x: hidden;
     width: 90%;
     padding: 2vh;
+    z-index: -2;
 }
 
 #vehicles::-webkit-scrollbar {
@@ -95,7 +124,7 @@ body {
 #buttons {
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-items: center;
     width: 100%;
+    position: absolute;
+    bottom: 0%;
 }

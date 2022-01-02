@@ -1,4 +1,11 @@
 var id = "none"
+var currentVehicle
+
+function error(msg) {
+    $.post("http://duke_garage/error", JSON.stringify({
+        error: msg
+    }));
+}
 
 $(function(){
     $('#container').hide();
@@ -8,25 +15,41 @@ $(function(){
             if(item !== undefined && item.type === "ui") {
                 if(item.display === true) {
                     $('#container').show();
+                    $('.element').remove();
                     vehicles = item.vehicles
+                    i = 1
                     vehicles.forEach(function(e) {
-                        $('#vehicles').append("<div class='element' id='" + e['name'] + "_" + e[config[0]] + "'></div>")
+                        $('#vehicles').append("<div class='element' id='" + e['id'] + "'><svg id='car' data-name='car' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000'><defs><style>.cls-1,.cls-2{fill:none;stroke:#fff;stroke-miterlimit:10;stroke-width:29px;}.cls-2{stroke-linecap:round;}.cls-3{fill:#fff;}</style></defs><path class='cls-1' d='M739.53,649.12H245.74'/><path class='cls-1' d='M93.14,636.78l-10-4.91c-5.51-2.7-18.69-12.32-29.29-21.37s-19.27-32-19.27-50.91v-105c0-12.07,3.49-24.83,7.76-28.34s13.39-7,20.27-7.85,19.49-1.7,28-2,24.5-.5,35.5-.5h38.5c10.18,0,30-2.09,44-4.64s42.17-11.42,62.55-19.7l54.92-22.31c20.39-8.29,54.74-18.43,76.36-22.54l1.89-.36c21.61-4.11,57.29-7.48,79.29-7.48h11.92c22,0,46.88.46,55.29,1s28.79,6.64,45.29,13.51,40.14,19.47,52.52,28,29.49,20,38,25.5,19.76,12.71,25,16a78.24,78.24,0,0,0,21,8.5,148.14,148.14,0,0,0,25.93,2.5h33.52c10.5,0,27,.68,36.57,1.5s23.58,3.34,31,5.59a159.35,159.35,0,0,1,24.5,10c6,3.25,16.12,9.51,22.44,13.91a177.24,177.24,0,0,1,20,16.5,102.65,102.65,0,0,1,14,18.22c3,5.35,9.54,19.08,14.5,30.5S964.79,560,965.61,571s1.5,27.93,1.5,37.63v29.07c0,6.31-11.51,11.46-25.58,11.46h-62'/><path class='cls-1' d='M443.61,338.93,401.42,374a33.56,33.56,0,0,0-4.14,4.29L377,404.59a40.85,40.85,0,0,0-3.22,5L363.5,429.3a1.88,1.88,0,0,0,1.6,2.95l67,6.43c1.64.15,4.32.42,6,.6l80,8.37c1.64.17,4.33.43,6,.58l83,7.46c1.65.15,4.34.37,6,.48l66,4.58a8.67,8.67,0,0,0,5.31-1.69L721.11,429'/><circle class='cls-1' cx='174.61' cy='586.46' r='92.5'/><circle class='cls-1' cx='810.61' cy='587.46' r='92.5'/><path class='cls-2' d='M858.9,587.26A47.3,47.3,0,1,1,811.6,540'/><path class='cls-2' d='M222.1,587.06a47.3,47.3,0,1,1-47.3-47.3'/><path class='cls-2' d='M314.61,588h213c21.45,0,48-1.68,59.09-3.75s30.16-18.12,42.47-35.69l27.06-38.61'/><path class='cls-2' d='M18.11,345.46c0,14.09,21,25.5,47,25.5s47-11.41,47-25.5V322a1,1,0,0,0-1-1h-92a1,1,0,0,0-1,1Z'/><path class='cls-3' d='M85.84,359.7a26,26,0,0,1,2.9-.95l1.21-.29,1.06-.19a9.55,9.55,0,0,1,3.24,0c1.72.34,2.29,1.54,3.15,2.52a29.6,29.6,0,0,1,4,6.8c2.06,5,3.27,10.56,6,15.05a23.74,23.74,0,0,0,4.85,6.13,34,34,0,0,0,7.14,4.42,28,28,0,0,1,7,4.55,15.2,15.2,0,0,1,2.45,3,2.12,2.12,0,0,1,.42.91,3.23,3.23,0,0,1-.5,1.59,4.73,4.73,0,0,1-.32.54,6,6,0,0,1-.39.6c-.25.39-.72.94-1.09,1.42l-.3.38-.43.47-.86.95-.87.95c-.32.34-.78.78-1.16,1.17A100,100,0,0,1,100,427.14c-.48.25-1,.57-1.45.78l-1.16.55-1.16.56-.57.28-.44.18c-.57.22-1.23.51-1.68.64-.25.09-.49.16-.69.21s-.44.13-.6.15a3.21,3.21,0,0,1-1.67,0c-.37-.13-.51-.43-.75-.66a14.82,14.82,0,0,1-2.22-3.21,28.34,28.34,0,0,1-2.38-8,34.49,34.49,0,0,0-2.2-8.11,23.86,23.86,0,0,0-4.49-6.39c-3.55-3.85-8.57-6.61-12.75-10a29.78,29.78,0,0,1-5.39-5.73c-.69-1.1-1.68-2-1.52-3.74a9.45,9.45,0,0,1,.9-3.11c.14-.31.31-.63.48-1l.62-1.07A29.12,29.12,0,0,1,62.6,377,53.38,53.38,0,0,1,85.84,359.7Z'/><line class='cls-2' x1='938.61' y1='649.12' x2='981.89' y2='649.12'/></svg ><p>" + e['manifacturer'] + " " + e['displayName'] + "</p></div>")
+                        i += 1;
                     })
+                    i = null;
                 } else {
                     $('#container').hide();
                 }
             }
         })
-    $('.element').click(function(){
-        id = this.attr('id');
+    $(document).on('click', '.element', function(){
+        id = $(this).attr('id');
+        text = $(this).children("p");
+        if (currentVehicle != undefined) {
+            $('#' + currentVehicle).css('border', '0.1px solid rgba(0, 0, 0, 0.0)');
+            $('#' + currentVehicle + " p").css('display', 'none');
+        }
+        currentVehicle = id;
+        $(this).css('border', '1px solid white');
+        text.css('display', 'block');
     })
     $('#out').click(function(){
-        $.post("http://duke_garage/out", JSON.stringify({
-            name: currentVehicle,
-            primary: $('#primary').val(),
-            secondary: $('#secondary').val(),
-            mods: mods_list
-        }));
+        if (currentVehicle != undefined) {
+            $.post("http://duke_garage/out", JSON.stringify({
+                id: currentVehicle,
+            }));
+        } else {
+            return
+        }
+    })
+    $('#close').click(function () {
+        $.post("http://duke_garage/exit", JSON.stringify({}));
     })
     }
 })
