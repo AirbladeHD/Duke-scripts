@@ -20,6 +20,15 @@ AddEventHandler('register', function()
     end
 end)]]--
 
+function GenerateNumber()
+    num = "01525 "
+    for i = 1, 5 do
+        local r = math.random(1,10)
+        num = num..r
+    end
+    return num
+end
+
 local function OnPlayerConnecting(name, setKickReason, deferrals)
     local player = source
     local name = GetPlayerName(player)
@@ -29,9 +38,12 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
     function(result)
         local users = json.encode(result)
         if not next(result) then
-            MySQL.Async.execute('INSERT INTO users (username, license) VALUES (@username, @license)', {
+            number = GenerateNumber()
+            print(number)
+            MySQL.Async.execute('INSERT INTO users (username, license, number) VALUES (@username, @license, @number)', {
                 ['@username'] = name,
                 ['@license'] = identifier,
+                ['@number'] = number,
             },
             function(affectedRows)
                print(affectedRows.." Zeile eingefügt. "..name.." registriert.")

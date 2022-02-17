@@ -1,5 +1,4 @@
 GarageOpen = false
-vehicles = {}
 
 function SetDisplay(bool, vehicles)
     display = bool
@@ -16,11 +15,6 @@ function SetDisplay(bool, vehicles)
             display = bool,
         })
     end
-end
-
-function hex2rgb(hex)
-    hex = hex:gsub("#","")
-    return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))
 end
 
 function ShowNotification(text)
@@ -73,6 +67,14 @@ function openGarage(i)
     end)
 end
 
+RegisterCommand("convar", function()
+    vehs = GetConvar("vehicles", "nil")
+    print("Laenge: "..#vehs)
+    for i = 1, #vehs do
+        print(vehs[i])
+    end
+end)
+
 RegisterNUICallback("error", function(data)
     print(data.error)
 end)
@@ -85,6 +87,7 @@ end)
 RegisterNUICallback('out', function(data)
     SetDisplay(false)
     GarageOpen = false
+    vehicles = GetConvar("vehicles", "nil")
     slot = findSlot(currentGarage)
     if slot ~= 0 then
         local player = GetPlayerServerId(PlayerId())
@@ -105,6 +108,7 @@ end
 
 function FilterVehicles(potential)
     local indexes = {}
+    print(#vehicles)
     for i = 1, #vehicles do
         vehCoords = GetEntityCoords(vehicles[i].veh)
         for p = 1, #potential do
@@ -184,19 +188,19 @@ function findSlot(lot)
     end
 end
 
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(2000)
-        if #vehicles == 0 then return end
-        for i = 1, #vehicles do
-            vehCoords = GetEntityCoords(vehicles[i].veh)
-            if vehCoords.x == 0 and vehCoords.y == 0 and vehCoords.z == 0 then
-                DeleteVehicle(vehicles[i].veh)
-                table.remove(vehicles, i)
-            end
-        end
-    end
-end)
+-- Citizen.CreateThread(function()
+--     while true do
+--         Citizen.Wait(2000)
+--         if #vehicles == 0 then return end
+--         for i = 1, #vehicles do
+--             vehCoords = GetEntityCoords(vehicles[i].veh)
+--             if vehCoords.x == 0 and vehCoords.y == 0 and vehCoords.z == 0 then
+--                 DeleteVehicle(vehicles[i].veh)
+--                 table.remove(vehicles, i)
+--             end
+--         end
+--     end
+-- end)
 
 RegisterCommand('delete', function()
     if #vehicles == 0 then return end
@@ -273,5 +277,5 @@ AddEventHandler("SpawnVehicle", function(result, slot)
         veh = Vehicle,
         owner = GetPlayerName(PlayerId())
     }
-    table.insert(vehicles, tab)
+    TriggerServerEvent("SaveVehicleToServer", tab)
 end)
