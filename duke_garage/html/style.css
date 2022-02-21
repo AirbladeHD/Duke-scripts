@@ -95,6 +95,21 @@ button {
     display: none;
 }
 
+#vehicles_outside {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 90%;
+    padding: 2vh;
+    z-index: -2;
+}
+
+#vehicles_outside::-webkit-scrollbar {
+    display: none;
+}
+
 #buttons button {
     padding: 10px 19px;
     width: 100%;

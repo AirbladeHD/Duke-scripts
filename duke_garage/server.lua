@@ -1,10 +1,32 @@
-SetConvarReplicated("segewgewge", {"random", "bullshit"})
+vehicles = {}
+SetConvarReplicated("vehicles", json.encode(vehicles))
 
 RegisterServerEvent("loadVehicles")
 AddEventHandler("loadVehicles", function(player)
     local license = GetPlayerIdentifier(player, 0)
     MySQL.Async.fetchAll('SELECT * FROM vehicles WHERE owner = @license', { ['@license'] = license }, function(result)
-        TriggerClientEvent("loadVehiclesCallback", player, result)
+        vehicles = GetConvar("vehicles", "nil")
+        vehicles = json.decode(vehicles)
+        vehicles_available = {}
+        vehicles_outside = {}
+        if(#result > 0) then
+            for i = 1, #result do
+                inTable = false
+                for e = 1, #vehicles do
+                    if result[i]["id"] == vehicles[e]["id"] then
+                        inTable = true
+                        table.insert(result[i], vehicles[e]["veh"])
+                    end
+                end
+                if inTable == false then
+                    table.insert(vehicles_available, result[i])
+                else
+
+                    table.insert(vehicles_outside, result[i])
+                end
+            end
+        end
+        TriggerClientEvent("loadVehiclesCallback", player, vehicles_available, vehicles_outside)
     end)
 end)
 
@@ -31,46 +53,22 @@ function table.contains(table, element)
   return false
 end
 
+RegisterServerEvent('SaveVehicleToServer')
+AddEventHandler('SaveVehicleToServer', function(data)
+    vehicles = GetConvar("vehicles", "nil")
+    vehicles = json.decode(vehicles)
+    table.insert(vehicles, data)
+    SetConvarReplicated("vehicles", json.encode(vehicles))
+end)
 
-function FilterVehicles(potential)
-    local indexes = {}
-    for i = 1, #vehicles do
-        vehCoords = GetEntityCoords(vehicles[i].veh)
-        for p = 1, #potential do
-            local distance = Vdist(vehCoords.x, vehCoords.y, vehCoords.z, potential[p].x, potential[p].y, potential[p].z)
-            if distance < 3 and table.contains(indexes, p) == false then
-                table.insert(indexes, p)
-            end
-        end
-    end
-    for i = 1, #indexes do
-        potential[indexes[i]] = 0
-    end
-    new = {}
-    for i = 1, #potential do
-        if potential[i] ~= 0 then
-            table.insert(new, potential[i])
-        end
-    end
-    return new
-end
-
-function hex2rgb(hex)
-    hex = hex:gsub("#","")
-    return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))
-end
-
--- RegisterServerEvent('SaveVehicleToServer')
--- AddEventHandler('SaveVehicleToServer', function(data)
---     vehicles = GetConvar("vehicles", "nil")
---     table.insert(vehicles, data)
---     SetConvarReplicated("vehicles", vehicles)
--- end)
+RegisterServerEvent('OverwriteVehicleDatabase')
+AddEventHandler('OverwriteVehicleDatabase', function(data)
+    SetConvarReplicated("vehicles", json.encode(data))
+end)
 
 RegisterServerEvent('SpawnVehicle')
 AddEventHandler('SpawnVehicle', function(id, player, slot)
     local license = GetPlayerIdentifier(player, 0)
-    local slot = FilterVehicles(slot)
     MySQL.Async.fetchAll('SELECT * FROM vehicles WHERE owner = @license AND id = @id', { ['@license'] = license, ['@id'] = id }, function(result)
         if result[1] == nil then
             msg = "Dieses Fahrzeug wurde nicht gefunden"
@@ -79,36 +77,15 @@ AddEventHandler('SpawnVehicle', function(id, player, slot)
             msg = result[1].manifacturer.." "..result[1].displayName.." ausgeparkt"
             TriggerClientEvent('SpawnVehicleCallback', player, msg)
             TriggerClientEvent('SpawnVehicle', player, result, slot)
-            -- local ModelHash = GetHashKey(result[1].name)
-            -- --if not IsModelInCdimage(ModelHash) then return end
-            --     --RequestModel(ModelHash)
-            -- --while not HasModelLoaded(ModelHash) do
-            --     --Citizen.Wait(10)
-            -- --end
-            -- Vehicle = CreateVehicle(ModelHash, slot.x, slot.y, slot.z, slot.h, true, false)
-            -- config = json.decode(result[1].config)
-            -- r1, g1, b1 = hex2rgb(config[1])
-            -- r2, g2, b2 = hex2rgb(config[2])
-            -- SetVehicleCustomPrimaryColour(Vehicle, r1, bg1, b1)
-            -- SetVehicleCustomSecondaryColour(Vehicle, r2, g2, b2)
-            -- if config[3] ~= "default" then
-            --     SetVehicleModKit(0)
-            --     for i = 1, #config[3] do
-            --         SetVehicleMod(Vehicle, config[3][i][1], config[3][i][2])
-            --     end
-            -- end
-            -- tab = {
-            --     veh = Vehicle,
-            --     owner = GetPlayerName(player)
-            -- }
-            -- table.insert(vehicles, tab)
         end
     end)
 end)
 
+
 RegisterCommand("convar", function()
-    vehs = GetConvar("segewgewge", "nil")
-    for i = 1, #vehs do
+    vehs = GetConvar("conv1", "nil")
+    vehs = json.decode(vehs)
+    for i = 1, #vehs do 
         print(vehs[i])
     end
 end)

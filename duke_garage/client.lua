@@ -1,13 +1,14 @@
 GarageOpen = false
 
-function SetDisplay(bool, vehicles)
+function SetDisplay(bool, vehicles_available, vehicles_outside)
     display = bool
     SetNuiFocus(bool, bool)
-    if vehicles then
+    if vehicles_available and vehicles_outside then
         SendNUIMessage({
             type = "ui",
             display = bool,
-            vehicles = vehicles,
+            vehicles_available = vehicles_available,
+            vehicles_outside = vehicles_outside
         })
     else
         SendNUIMessage({
@@ -15,6 +16,11 @@ function SetDisplay(bool, vehicles)
             display = bool,
         })
     end
+end
+
+function hex2rgb(hex)
+    hex = hex:gsub("#","")
+    return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))
 end
 
 function ShowNotification(text)
@@ -69,7 +75,7 @@ end
 
 RegisterCommand("convar", function()
     vehs = GetConvar("vehicles", "nil")
-    print("Laenge: "..#vehs)
+    vehs = json.decode(vehs)
     for i = 1, #vehs do
         print(vehs[i])
     end
@@ -97,6 +103,21 @@ RegisterNUICallback('out', function(data)
     end
 end)
 
+RegisterNUICallback('in', function(data)
+    SetDisplay(false)
+    GarageOpen = false
+    vehicles = GetConvar("vehicles", "nil")
+    vehicles = json.decode(vehicles)
+    for i = 1, #vehicles do
+        if tostring(vehicles[i]["id"]) == tostring(data.id) then
+            DeleteVehicle(vehicles[i]["veh"])
+            index = i
+        end
+    end
+    table.remove(vehicles, index)
+    TriggerServerEvent("OverwriteVehicleDatabase", vehicles)
+end)
+
 function table.contains(table, element)
   for _, value in pairs(table) do
     if value == element then
@@ -108,7 +129,8 @@ end
 
 function FilterVehicles(potential)
     local indexes = {}
-    print(#vehicles)
+    vehicles = GetConvar("vehicles", "nil")
+    vehicles = json.decode(vehicles)
     for i = 1, #vehicles do
         vehCoords = GetEntityCoords(vehicles[i].veh)
         for p = 1, #potential do
@@ -240,12 +262,22 @@ RegisterCommand("vehicles", function()
 end)
 
 RegisterNetEvent("loadVehiclesCallback")
-AddEventHandler("loadVehiclesCallback", function(vehicles)
-    for i = 1, #vehicles, 1 do
-        config = json.decode(vehicles[i]["config"])
-        vehicles[i].config = config
+AddEventHandler("loadVehiclesCallback", function(vehicles_available, vehicles_outside)
+    for i = 1, #vehicles_available, 1 do
+        config = json.decode(vehicles_available[i]["config"])
+        vehicles_available[i].config = config
     end
-    SetDisplay(true, vehicles)
+    vehicles_nearby = {}
+    for i = 1, #vehicles_outside do
+        veh = vehicles_outside[i][1]
+        vehCoords = GetEntityCoords(veh)
+        coords = GetEntityCoords(PlayerPedId())
+        local dist = Vdist(vehCoords, coords)
+        if dist < 12 then
+            table.insert(vehicles_nearby, vehicles_outside[i])
+        end
+    end
+    SetDisplay(true, vehicles_available, vehicles_nearby)
 end)
 
 RegisterNetEvent("SpawnVehicleCallback")
@@ -275,7 +307,8 @@ AddEventHandler("SpawnVehicle", function(result, slot)
     end
     tab = {
         veh = Vehicle,
-        owner = GetPlayerName(PlayerId())
+        owner = GetPlayerName(PlayerId()),
+        id = result[1].id
     }
     TriggerServerEvent("SaveVehicleToServer", tab)
 end)
