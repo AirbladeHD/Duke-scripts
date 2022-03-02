@@ -5,17 +5,94 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Homemade+Apple&family=Indie+Flower&family=Nothing+You+Could+Do&family=Ole&family=Parisienne&family=Reenie+Beanie&family=Rock+Salt&family=Sacramento&display=swap" rel="stylesheet">
 		<script src="nui://game/ui/jquery.js" type="text/javascript"></script>
 		<script src="./listener.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<div id="container">
-				<h2>Antrag auf Einbürgerung</h2>
-				<div class="info">
-					<p>Bitte ankreuzen oder ausfüllen. Nichtzutreffendes mit „entfällt“ oder „nicht zutreffend“ kennzeichnen. Bei bewussten Falschangaben, tritt eine Staatsangehörigkeitssperre von 5 Jahren in Kraft.</p>
-				</div>
-				<p class="header">Ich beantrage die Staatsangehörigkeit auf Duke City</p>
-				<!--<button type="button" id="close">Schließen</button>-->
+			<p style="font-weight: bold; font-size: 18px;">Antrag auf Einbürgerung</p>
+			<div class="info">
+				<p>Bitte ankreuzen oder ausfüllen. Nichtzutreffendes mit „entfällt“ oder „nicht zutreffend“ kennzeichnen. Bei bewussten Falschangaben, tritt eine Staatsangehörigkeitssperre von 5 Jahren in Kraft.</p>
+			</div>
+			<p style="font-weight: bold; font-size: 18px;">Ich beantrage die Staatsangehörigkeit auf Duke City</p>
+			<table style="width: 100%; margin-top: 1vh;">
+				<tr>
+					<td colspan="2" style="font-weight: bold;">1. Antragsteller</td>
+				</tr>
+				<tr>
+					<td><label for="male">Männlich<input type="radio" name="gender" id="document_male" value="male"></label></td>
+					<td><label for="female">Weiblich<input type="radio" name="gender" id="document_female" value="female"></label></td>
+				</tr>
+				<tr>
+					<td><label for="lastname">Nachname<input type="text" style="float: right;" id="lastname" autocomplete="off" required></label></td>
+					<td><label for="firstname">Vorname(n)<input type="text" style="float: right;" id="firstname" autocomplete="off" required></label></td>
+				</tr>
+				<tr>
+					<td colspan="2">Familienstand<br>
+						<div id="family">
+							<label for="married">verheiratet<input type="radio" name="family" id="married" value="married"></label>
+							<label for="divorced">geschieden<input type="radio" name="family" id="divorced" value="divorced"></label>
+							<label for="single">ledig<input type="radio" name="family" id="single" value="single"></label>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 50%;"><label for="size">Körpergröße (in cm)<input type="text" name="size" id="size" style="width: 40%;" class="properties" autocomplete="off" required></label></td>
+					<td style="width: 50%;"><label for="eyes">Augenfarbe<input type="text" name="eyes" id="eyes" class="properties" autocomplete="off" required></label></td>
+				</tr>
+				<tr>
+					<td colspan="2"><label for="size">Geburtsdatum<input data-date-format="DD MM YYYY" type="date" name="dob" id="dob" style="width: 40%;" class="properties" autocomplete="off" required></label></td>
+				</tr>
+			</table>
+			<table style="width: 100%; margin-top: 1vh;">
+				<tr>
+					<td colspan="3" style="font-weight: bold;">2. Bisherige Aufenthaltsorte (Falls vorhanden)</td>
+				</tr>
+				<tr>
+					<td style="width: 35%;"><label for="from1">Von<input data-date-format="DD MM YYYY" style="width: 80%;" type="date" name="from1" id="from1" class="properties" autocomplete="off" required></label></td>
+					<td style="width: 35%;"><label for="till1">Bis<input data-date-format="DD MM YYYY" style="width: 80%;" type="date" name="till1" id="till1" class="properties" autocomplete="off" required></label></td>
+					<td><label for="in1">In<input type="text" name="in1" id="in1" class="properties" autocomplete="off" style="width: 80%;" required></label></td>
+				</tr>
+				<tr>
+					<td style="width: 35%;"><label for="from2">Von<input data-date-format="DD MM YYYY" style="width: 80%;" type="date" name="from2" id="from2" class="properties" autocomplete="off" required></label></td>
+					<td style="width: 35%;"><label for="till2">Bis<input data-date-format="DD MM YYYY" style="width: 80%;" type="date" name="till2" id="till2" class="properties" autocomplete="off" required></label></td>
+					<td><label for="in2">In<input type="text" name="in2" id="in2" class="properties" autocomplete="off" style="width: 80%;" required></label></td>
+				</tr>
+			</table>
+			<table style="width: 100%; margin-top: 1vh;">
+				<tr>
+					<td colspan="3" style="font-weight: bold;">3. Vorherige Beschäftigung (Hier nur ein zutreffendes Feld ausfüllen. Bei mehrfacher Eingabe wird nur der letzte Wert akzeptiert.)</td>
+				</tr>
+				<tr>
+					<td style="width: 50%;"><label for="official">Beamter<input type="text" name="official" id="official" class="properties" autocomplete="off" ></label></td>
+					<td style="width: 50%;"><label for="self-employed">Selbständig<input type="text" name="self-employed" id="self-employed" class="properties" autocomplete="off" ></label></td>
+				</tr>
+				<tr>
+					<td style="width: 50%;"><label for="employee">Angestellter<input type="text" name="employee" id="employee" class="properties" autocomplete="off" ></label></td>
+					<td style="width: 50%;"><label for="volunteer">Ehrenamtlich<input type="text" name="volunteer" id="volunteer" class="properties" autocomplete="off" ></label></td>
+				</tr>
+				<tr>
+					<td style="width: 50%;"><label for="unemployed">Arbeitslos<input type="checkbox" name="unemployed" id="unemployed" class="properties"></label></td>
+					<td style="width: 50%;"><label for="other">Sonstiges<input type="text" name="other" id="other" class="properties" autocomplete="off" ></label></td>
+				</tr>
+			</table>
+			<table style="width: 100%; margin-top: 1vh;">
+				<tr>
+					<td colspan="3" style="font-weight: bold;">4. Einverständniserklärung</td>
+				</tr>
+				<tr>
+					<td>Ich bestätige, dass die untenstehende Unterschrift eigenwillig von mir gesetzt wurde und ich alle Angaben oben auf Korrektheit geprüft habe</td>
+				</tr>
+				<tr style="height: 50px">
+					<td style="text-align: center; cursor: pointer; font-weight: bolder; font-style: italic;" id="sign"><p id="signature">Klicken zum Unterschreiben</p></td>
+				</tr>
+				<tr>
+					<td style="text-align: center;">Unterschrift Antragsteller</td>
+				</tr>
+			</table>
+			<button id="close">Schließen</button>
 		</div>
 		<div id="confirm">
 			<h1>Charakter bestätigen?</h1>
@@ -28,6 +105,18 @@
 			<p>Dieser Schritt kann nicht mehr rückgängig gemacht werden!</p>
 			<button type="button" id="male">Männlich</button>
 			<button type="button" id="female">Weiblich</button>
+		</div>
+		<div id="signatureConfirm">
+			<h1>Dokument unterschreiben?</h1>
+			<p>Achtung: Alle Angaben auf diesem Dokument werden mit der Unterschrift gültig!</p>
+			<button type="button" id="signYes">Ja</button>
+			<button type="button" id="signNo">Nein</button>
+		</div>
+		<div id="identityConfirm">
+			<h1>Einreise abschließen?</h1>
+			<p>Möchtest du die Einreise abschließen und deine Personalausweis abholen?</p>
+			<button type="button" id="yesIdentity" class="yes">Ja</button>
+			<button type="button" id="noIdentity" class="no">Nein</button>
 		</div>
 	</body>
 </html>

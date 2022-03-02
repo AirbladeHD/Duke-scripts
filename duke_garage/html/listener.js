@@ -42,6 +42,7 @@ $(function(){
             $('#' + currentVehicle + " p").css('display', 'none');
         }
         currentVehicle = id;
+        currentVehicleName = $(this).children("p").text()
         $(this).css('border', '1px solid white');
         text.css('display', 'block');
     })
@@ -57,10 +58,12 @@ $(function(){
     })
     $('#in').click(function () {
         var info = currentVehicle.search("_")
+
         if (currentVehicle != undefined && info != -1) {
             id = currentVehicle.split("_")
             $.post("http://duke_garage/in", JSON.stringify({
                 id: id[0],
+                name: currentVehicleName,
             }));
         } else {
             return

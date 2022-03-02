@@ -1,13 +1,44 @@
-RegisterServerEvent('inv:refresh_inventory')
-AddEventHandler('inv:refresh_inventory', function(player)
-    local identifier = GetPlayerIdentifier(player, 0)
-    MySQL.Async.fetchAll('SELECT inventory, username FROM users WHERE license = @license', { 
-        ['@license'] = identifier },
-    function(result)
-        local inventory = result[1].inventory
-        local user = result[1].username
-        SetConvarReplicated("inventory"..user, inventory)
-    end)
+function ReloadInventory(inventory, name)
+    if inventory ~= "{}" then
+        MySQL.Async.fetchAll("SELECT * FROM items", {}, 
+        function(result)
+            inventory = json.decode(inventory)
+            inventoryData = {}
+            for i = 1, #inventory do
+                for e = 1, #result do
+                    if inventory[i].name == result[e].name then
+                        tab = {
+                            name = inventory[i].name,
+                            quant = inventory[i].quant,
+                            desc = result[e].description,
+                            handler = result[e].handler
+                        }
+                        table.insert(inventoryData, tab)
+                    end
+                end
+            end
+            SetConvarReplicated("inventory"..name, json.encode(inventoryData))
+        end)
+        return true
+    else 
+        SetConvarReplicated("inventory"..name, inventory) 
+        return true
+    end
+end
+
+RegisterServerEvent('refreshInventorys')
+AddEventHandler('refreshInventorys', function()
+    for _, playerId in ipairs(GetPlayers()) do
+        local license = GetPlayerIdentifier(playerId, 0)
+        local name = GetPlayerName(playerId)
+         MySQL.Async.fetchAll('SELECT inventory FROM users WHERE license = @license', {
+        ['@license'] = license
+        },
+        function(result)
+            local inventory = result[1].inventory
+            inventory = ReloadInventory(inventory, name)
+        end)
+    end
 end)
 
 RegisterServerEvent('inv:registerItem')
@@ -72,7 +103,7 @@ function RegisterItem(item, desc, handler)
 end
 
 RegisterServerEvent('inv:addItem')
-AddEventHandler('inv:addItem', function(item, amount, user)
+AddEventHandler('inv:addItem', function(item, quant, user)
     local inInv = false
     MySQL.Async.fetchAll('SELECT name FROM items WHERE name = @item', {
         ['@item'] = item
@@ -93,25 +124,25 @@ AddEventHandler('inv:addItem', function(item, amount, user)
                     end
                 end
                 if inInv == false then
-                    table.insert(inventory, {name = item, amount = amount})
+                    table.insert(inventory, {name = item, quant = quant})
                     MySQL.Async.execute('UPDATE users SET inventory = @inventory WHERE license = @license', {
                         ['@inventory'] = json.encode(inventory),
                         ['@license'] = license,
                         },
                     function(affectedRows)
-                        local msg = item.." ("..amount..") hinzugefügt"
+                        local msg = item.." ("..quant..") hinzugefügt"
                         TriggerClientEvent('inv:callback', user, item, msg)
                     end)
                 else
                     for i = 1, #inventory, 1 do
                         if inventory[i].name == item then
-                            old_amount = inventory[i].amount
+                            old_quant = inventory[i].quant
                         end
                     end
-                    local new_amount = old_amount + amount
+                    local new_quant = old_quant + quant
                     for i = 1, #inventory, 1 do
                         if inventory[i].name == item then
-                            inventory[i].amount = math.ceil(new_amount)
+                            inventory[i].quant = math.ceil(new_quant)
                         end
                     end
                     MySQL.Async.execute('UPDATE users SET inventory = @inventory WHERE license = @license', {
@@ -119,7 +150,7 @@ AddEventHandler('inv:addItem', function(item, amount, user)
                         ['@license'] = license,
                         },
                     function(affectedRows)
-                        local msg = item.." ("..amount..") hinzugefügt"
+                        local msg = item.." ("..quant..") hinzugefügt"
                         TriggerClientEvent('inv:callback', user, item, msg)
                     end)
                 end
@@ -129,7 +160,7 @@ AddEventHandler('inv:addItem', function(item, amount, user)
 end)
 
 RegisterServerEvent('inv:removeItem')
-AddEventHandler('inv:removeItem', function(item, amount, user)
+AddEventHandler('inv:removeItem', function(item, quant, user)
     local inInv = false
     MySQL.Async.fetchAll('SELECT name FROM items WHERE name = @item', {
         ['@item'] = item
@@ -155,54 +186,40 @@ AddEventHandler('inv:removeItem', function(item, amount, user)
                 else
                     for i = 1, #inventory, 1 do
                         if inventory[i].name == item then
-                            old_amount = inventory[i].amount
+                            old_quant = inventory[i].quant
                             index = i
                         end
                     end
-                    local new_amount = old_amount - amount
-                    if new_amount < 0 then
+                    local new_quant = old_quant - quant
+                    if new_quant < 0 then
                         local msg = "Du hast nicht genug von diesem Item!"
                         TriggerClientEvent('inv:callback', user, nil, msg)
                         return
                     end
-                    if new_amount == 0 then
+                    if new_quant == 0 then
                         table.remove(inventory, index)
                         MySQL.Async.execute('UPDATE users SET inventory = @inventory WHERE license = @license', {
                             ['@inventory'] = json.encode(inventory),
                             ['@license'] = license,
                             },
                         function(affectedRows)
-                            local msg = item.." ("..amount..") entfernt!"
-                            TriggerClientEvent('inv:removeitem_callback', user, item, amount, msg)
+                            local msg = item.." ("..quant..") entfernt!"
+                            TriggerClientEvent('inv:removeitem_callback', user, item, quant, msg)
                         end)
                         return
                     end
-                    inventory[index].amount = math.ceil(new_amount)
+                    inventory[index].quant = math.ceil(new_quant)
                     MySQL.Async.execute('UPDATE users SET inventory = @inventory WHERE license = @license', {
                         ['@inventory'] = json.encode(inventory),
                         ['@license'] = license,
                         },
                     function(affectedRows)
-                        local msg = item.." ("..amount..") entfernt!"
-                        TriggerClientEvent('inv:removeitem_callback', user, item, amount, msg)
+                        local msg = item.." ("..quant..") entfernt!"
+                        TriggerClientEvent('inv:removeitem_callback', user, item, quant, msg)
                     end)
                     return
                 end
             end)
-        end
-    end)
-end)
-
-RegisterServerEvent('inv:GetInfo', function(item, user)
-    MySQL.Async.fetchAll('SELECT handler, description FROM items WHERE name = @item', {
-        ['@item'] = item
-    },
-    function(result)
-        if result[1].handler ~= nil then
-            SetConvarReplicated(item.."Handler", result[1].handler)
-        end
-        if result[1].description ~= nil then
-            SetConvarReplicated(item.."Desc", result[1].description)
         end
     end)
 end)
@@ -236,27 +253,3 @@ RegisterServerEvent('inv:RegisterItem', function(item, desc, handler)
         end
     end)
 end)
-
-local function OnPlayerConnecting(name, setKickReason, deferrals)
-    local player = source
-    local name = GetPlayerName(player)
-    local identifier = GetPlayerIdentifier(player, 0)
-    MySQL.Async.fetchAll('SELECT inventory, username FROM users WHERE license = @license', { 
-        ['@license'] = identifier },
-    function(result)
-        local inventory = result[1].inventory
-        local user = result[1].username
-        if name ~= user then
-            MySQL.Async.execute('UPDATE users SET username = @username WHERE license = @license', {
-                ['@license'] = identifier,
-                ['@username'] = name },
-            function(affectedRows)
-                print("Namen aktualisiert")
-                user = name
-            end)
-        end
-        SetConvarReplicated("inventory"..user, inventory)
-    end)
-end
-
-AddEventHandler("playerConnecting", OnPlayerConnecting)

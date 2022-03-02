@@ -1,0 +1,26 @@
+* {
+	overflow: hidden;
+}
+
+#alert {
+	top: 1%;
+	right: 0.5%;
+	transform: translateX(110%);
+	max-width: 22vw;
+	position: absolute;
+	padding: 20px;
+	text-align: center;
+	font-family: 'Roboto', sans-serif;
+	background-image: linear-gradient(to bottom right,#037007, black);
+	color: white;
+	font-size: 20px;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.icon {
+	width: 170px;
+}

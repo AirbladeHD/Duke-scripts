@@ -1,4 +1,6 @@
 GarageOpen = false
+DataFetched = false
+VehicleCoords = {}
 
 function SetDisplay(bool, vehicles_available, vehicles_outside)
     display = bool
@@ -17,6 +19,12 @@ function SetDisplay(bool, vehicles_available, vehicles_outside)
         })
     end
 end
+
+RegisterNetEvent("DataFetched")
+AddEventHandler("DataFetched", function(data)
+    VehicleCoords = data
+    DataFetched = true
+end)
 
 function hex2rgb(hex)
     hex = hex:gsub("#","")
@@ -116,6 +124,7 @@ RegisterNUICallback('in', function(data)
     end
     table.remove(vehicles, index)
     TriggerServerEvent("OverwriteVehicleDatabase", vehicles)
+    ShowNotification(data.name.." eingeparkt")
 end)
 
 function table.contains(table, element)
@@ -129,14 +138,13 @@ end
 
 function FilterVehicles(potential)
     local indexes = {}
-    vehicles = GetConvar("vehicles", "nil")
-    vehicles = json.decode(vehicles)
-    for i = 1, #vehicles do
-        vehCoords = GetEntityCoords(vehicles[i].veh)
-        for p = 1, #potential do
-            local distance = Vdist(vehCoords.x, vehCoords.y, vehCoords.z, potential[p].x, potential[p].y, potential[p].z)
-            if distance < 3 and table.contains(indexes, p) == false then
-                table.insert(indexes, p)
+    if #VehicleCoords > 0 then
+        for i = 1, #VehicleCoords do
+            for p = 1, #potential do
+                local distance = Vdist(VehicleCoords[i].x, VehicleCoords[i].y, VehicleCoords[i].z, potential[p].x, potential[p].y, potential[p].z)
+                if distance < 3 and table.contains(indexes, p) == false then
+                    table.insert(indexes, p)
+                end
             end
         end
     end
@@ -200,9 +208,14 @@ function findSlot(lot)
         }
         table.insert(potential, tab)
     end
+    TriggerServerEvent("FetchVehicles", GetPlayerServerId(PlayerId()))
+    while DataFetched == false do
+        Citizen.Wait(1)
+    end
     local potential = FilterVehicles(potential)
     local potential = FilterPeds(potential)
     local slot = FilterExistingVehicles(potential)
+    DataFetched = false
     if slot ~= nil then
         return slot
     else
@@ -273,7 +286,7 @@ AddEventHandler("loadVehiclesCallback", function(vehicles_available, vehicles_ou
         vehCoords = GetEntityCoords(veh)
         coords = GetEntityCoords(PlayerPedId())
         local dist = Vdist(vehCoords, coords)
-        if dist < 12 then
+        if dist < 20 then
             table.insert(vehicles_nearby, vehicles_outside[i])
         end
     end
@@ -283,6 +296,17 @@ end)
 RegisterNetEvent("SpawnVehicleCallback")
 AddEventHandler("SpawnVehicleCallback", function(msg)
     ShowNotification(msg)
+end)
+
+RegisterNetEvent("SendVehicleInfo")
+AddEventHandler("SendVehicleInfo", function()
+    vehicles = GetConvar("vehicles", "nil")
+    vehicles = json.decode(vehicles)
+    for i = 1, #vehicles do
+        if vehicles[i].owner == GetPlayerName(PlayerId()) then
+            TriggerServerEvent("FetchVehiclesCallback", GetEntityCoords(vehicles[i].veh))
+        end
+    end
 end)
 
 RegisterNetEvent("SpawnVehicle")

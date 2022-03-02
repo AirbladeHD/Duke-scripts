@@ -72,7 +72,7 @@ AddEventHandler('SpawnVehicle', function(id, player, slot)
     MySQL.Async.fetchAll('SELECT * FROM vehicles WHERE owner = @license AND id = @id', { ['@license'] = license, ['@id'] = id }, function(result)
         if result[1] == nil then
             msg = "Dieses Fahrzeug wurde nicht gefunden"
-            TriggerClientEvent('SpawnVehicleCallback', msg)
+            TriggerClientEvent('SpawnVehicleCallback', player, msg)
         else
             msg = result[1].manifacturer.." "..result[1].displayName.." ausgeparkt"
             TriggerClientEvent('SpawnVehicleCallback', player, msg)
@@ -81,11 +81,19 @@ AddEventHandler('SpawnVehicle', function(id, player, slot)
     end)
 end)
 
+RegisterServerEvent("FetchVehicles")
+AddEventHandler("FetchVehicles", function(player)
+    SetConvarReplicated("VehicleCoords", "[]")
+    AllVehicles = {}
+    TriggerClientEvent("SendVehicleInfo", -1)
+    Citizen.Wait(200)
+    SetConvarReplicated("VehicleCoords", json.encode(AllVehicles))
+    TriggerClientEvent("DataFetched", player, AllVehicles)
+end)
 
-RegisterCommand("convar", function()
-    vehs = GetConvar("conv1", "nil")
-    vehs = json.decode(vehs)
-    for i = 1, #vehs do 
-        print(vehs[i])
+RegisterServerEvent("FetchVehiclesCallback")
+AddEventHandler("FetchVehiclesCallback", function(data)
+    if #data > 0 then
+        table.insert(AllVehicles, data)
     end
 end)

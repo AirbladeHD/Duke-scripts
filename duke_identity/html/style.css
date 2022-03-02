@@ -1,4 +1,7 @@
-/* This applies to all elements (bad practice) */
+* {
+	user-select: none;
+}
+
 body {
 	color: black;
 	font-family: Arial;
@@ -6,13 +9,12 @@ body {
 
 #container {
 	width: 550px;
-	height: 750px;
 	padding: 10px;
-  position: absolute;
-  top: 47%;
-  left: 50%;
-  transform: translate(-50%,-40%);
-  font-size: 25px;
+	position: absolute;
+	top: 47%;
+	left: 50%;
+	transform: translate(-50%,-40%);
+	font-size: 22px;
 	text-align: left;
 	background-color: white;
 	border: 2px solid #dad9d9 ;
@@ -24,14 +26,21 @@ body {
 
 .header {
 	font-weight: bold;
-	font-size: 22px;
+	font-size: 20px;
+}
+
+.heading {
+	font-weight: bold;
+	font-size: 20px;
+	margin: 1vh;
+	display: inline-block;
 }
 
 .info {
 	margin-top: 2vh;
 	margin-bottom: 2vh;
 	padding: 5px;
-	font-size: 19px;
+	font-size: 16px;
 	border: 1px solid black;
 }
 
@@ -52,6 +61,7 @@ body {
 	background-image: linear-gradient(to bottom right,#037007, black);
 	color: white;
 	border-radius: 30px;
+	display: none;
 }
 
 #confirm p {
@@ -76,6 +86,16 @@ body {
 }
 
 #no:hover {
+	background-color: #f31313;
+	color: white;
+}
+
+.yes:hover {
+	background-color: #19d21f;
+	color: white;
+}
+
+.no:hover {
 	background-color: #f31313;
 	color: white;
 }
@@ -125,6 +145,162 @@ body {
 }
 
 #gender h1 {
+	font-size: 22px;
+	font-weight: 500;
+	padding: 5px;
+	font-family: 'Roboto', sans-serif;
+}
+
+.block {
+	margin-top: 2vh;
+	margin-bottom: 2vh;
+}
+
+#antragsteller {
+	width: 100%;
+	border: 1px solid black;
+}
+
+.label {
+	float: right;
+	margin: 1vh;
+}
+
+.names {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	font-size: 16px;
+	padding: 1vh;
+	margin: 0;
+}
+
+td {
+	padding: 5px;
+}
+
+input {
+	outline: none;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+#family {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+
+.properties {
+	width: 60%;
+	float: right;
+}
+
+#signature {
+	transform: translateY(75%);
+}
+
+#signatureConfirm {
+	top: 47%;
+	left: 50%;
+	transform: translate(-50%,-40%);
+	position: absolute;
+	width: 400px;
+	padding: 20px;
+	text-align: center;
+	font-size: 18px;
+	font-family: 'Roboto', sans-serif;
+	background-image: linear-gradient(to bottom right,#037007, black);
+	color: white;
+	border-radius: 30px;
+	display: none;
+}
+
+#signatureConfirm p {
+	margin: 5px;
+}
+
+#signatureConfirm button {
+	margin: 8px;
+	width: 30%;
+	height: 35px;
+	border-radius: 20px;
+	border: none;
+	font-size: 15px;
+	font-weight: bold;
+	transition: 0.4s ease;
+	cursor: pointer;
+}
+
+#signYes:hover {
+	background-color: #19d21f;
+	color: white;
+}
+
+#signNo:hover {
+	background-color: #f31313;
+	color: white;
+}
+
+#signatureConfirm h1 {
+	font-size: 22px;
+	font-weight: 500;
+	padding: 5px;
+	font-family: 'Roboto', sans-serif;
+}
+
+button {
+	outline: none;
+}
+
+#close {
+	position: relative;
+	transform: translateX(250%);
+	margin: 1vh;
+	border-radius: 10px;
+	padding: 5px 15px;
+	border: 1px solid black;
+	cursor: pointer;
+}
+
+#identityConfirm {
+	top: 47%;
+	left: 50%;
+	transform: translate(-50%,-40%);
+	position: absolute;
+	width: 400px;
+	padding: 20px;
+	text-align: center;
+	font-size: 18px;
+	font-family: 'Roboto', sans-serif;
+	background-image: linear-gradient(to bottom right,#037007, black);
+	color: white;
+	border-radius: 30px;
+	display: none;
+	z-index: 10;
+}
+
+#identityConfirm p {
+	margin: 5px;
+}
+
+#identityConfirm button {
+	margin: 8px;
+	width: 30%;
+	height: 35px;
+	border-radius: 20px;
+	border: none;
+	font-size: 15px;
+	font-weight: bold;
+	transition: 0.4s ease;
+	cursor: pointer;
+}
+
+#identityConfirm h1 {
 	font-size: 22px;
 	font-weight: 500;
 	padding: 5px;
